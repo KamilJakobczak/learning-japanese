@@ -1,11 +1,11 @@
 import { Sets } from '../data/db';
 
 class Table {
-	$wrapper;
+	$container;
 	$header;
 	$data;
-	constructor(wrapper: HTMLElement, header: string, data: Sets) {
-		this.$wrapper = wrapper;
+	constructor(container: HTMLElement, header: string, data: Sets) {
+		this.$container = container;
 		this.$header = header;
 		this.$data = data;
 	}
@@ -14,7 +14,7 @@ class Table {
 		const columns = Object.keys(this.$data).length;
 		const table = document.createElement('div');
 		table.classList.add('table');
-		this.$wrapper.appendChild(table);
+		this.$container.appendChild(table);
 		const tableHeader = document.createElement('div');
 		tableHeader.classList.add('table-header');
 		tableHeader.innerHTML = `<h2>${this.$header}</h2>`;

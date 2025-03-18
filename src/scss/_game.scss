@@ -5,13 +5,74 @@
 	align-items: center;
 	gap: 50px;
 	#hiraganaGame {
-		width: 1000px;
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		width: 1200px;
 		min-height: 500px;
 		margin: 50px auto 0;
+		padding-left: 20px;
+		padding-right: 20px;
 		border: 5px solid #040461;
 		border-radius: 10px;
 		box-shadow: 0px 9px 25px 5px #040461;
+		font-size: 2rem;
+		h1 {
+			text-align: center;
+			font-size: 3rem;
+			color: #040461;
+			margin: 15px 0;
+			letter-spacing: 2px;
+			text-transform: uppercase;
+			font-weight: 500;
+		}
 	}
-	.table {
+	.hiraganaGame {
+		&__username {
+			display: flex;
+			gap: 20px;
+			label {
+			}
+			input#username {
+			}
+		}
+		&__difficulty {
+			display: flex;
+			gap: 20px;
+			label {
+			}
+			&_radioWrapper {
+				display: flex;
+				gap: 10px;
+				input {
+				}
+				label {
+				}
+			}
+		}
+		&__range {
+			display: flex;
+			gap: 20px;
+			label {
+			}
+			&_radioWrapper {
+				display: flex;
+				gap: 10px;
+				flex-direction: row;
+				flex-wrap: wrap;
+				> div {
+					flex-basis: 30%;
+					display: flex;
+					flex-direction: row;
+					gap: 10px;
+					input {
+					}
+					label {
+						font-family: 'Noto Sans JP', sans-serif;
+						font-weight: 400;
+					}
+				}
+			}
+		}
 	}
 }
