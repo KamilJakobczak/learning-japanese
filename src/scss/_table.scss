@@ -1,0 +1,39 @@
+.table {
+	border: 2px solid black;
+	max-width: 1000px;
+	&-header {
+		margin-top: 10px;
+		margin-bottom: 20px;
+
+		h2 {
+			text-align: center;
+			text-transform: uppercase;
+			letter-spacing: 3px;
+			font-weight: 400;
+			font-size: 3rem;
+		}
+	}
+	&-body {
+		width: 100%;
+		margin-bottom: 20px;
+		column-gap: 5px;
+		row-gap: 10px;
+	}
+	&-cell {
+		min-width: 50px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		flex-direction: column;
+		span {
+			display: inline-block;
+			&:nth-child(1) {
+				font-size: 2.1rem;
+				font-weight: 600;
+			}
+			&:nth-child(2) {
+				font-size: 1.8rem;
+			}
+		}
+	}
+}

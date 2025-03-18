@@ -1,12 +1,14 @@
-import { set1 } from './src/data/db';
 import './src/scss/main.scss';
+import GameWindow from './src/script/GameWindow';
+import Table from './src/script/Table';
+import { sets } from './src/data/db';
 
-const wrapper = document.querySelector(
-	'.wrapper'
-) as HTMLElement;
+const gameWindow = new GameWindow();
+gameWindow.render();
 
-const testH1 = document.createElement('h1');
-testH1.textContent = 'Hello World!';
-wrapper.appendChild(testH1);
+const wrapper = document.querySelector('.wrapper');
+const hiraganaTable = new Table(wrapper as HTMLElement, 'hiragana', sets);
+hiraganaTable.render();
 
-console.log(set1);
+// const katakanaTable = new Table(wrapper as HTMLElement, 'katakana', sets);
+// katakanaTable.render();

@@ -1,4 +1,14 @@
-export const characters = {
+interface Character {
+	hiragana: string;
+	katakana: string;
+	romaji: string;
+}
+
+export interface Sets {
+	[key: string]: Character[];
+}
+
+export const characters: { [key: string]: Character } = {
 	'1': { hiragana: 'あ', katakana: 'ア', romaji: 'a' },
 	'2': { hiragana: 'い', katakana: 'イ', romaji: 'i' },
 	'3': { hiragana: 'う', katakana: 'ウ', romaji: 'u' },
@@ -70,18 +80,22 @@ export const characters = {
 	'69': { hiragana: 'ぽ', katakana: 'ポ', romaji: 'po' },
 };
 
-export const set1 = [characters[1], characters[2], characters[3], characters[4], characters[5]];
-export const set2 = [characters[6], characters[7], characters[8], characters[9], characters[10]];
-export const set3 = [characters[11], characters[12], characters[13], characters[14], characters[15]];
-export const set4 = [characters[16], characters[17], characters[18], characters[19], characters[20]];
-export const set5 = [characters[21], characters[22], characters[23], characters[24], characters[25]];
-export const set6 = [characters[26], characters[27], characters[28], characters[29], characters[30]];
-export const set7 = [characters[31], characters[32], characters[33], characters[34], characters[35]];
-export const set8 = [characters[36], characters[37], characters[38]];
-export const set9 = [characters[39], characters[40], characters[41], characters[42], characters[43]];
-export const set10 = [characters[44], characters[45], characters[46]];
-export const set11 = [characters[47], characters[48], characters[49], characters[50], characters[51]];
-export const set12 = [characters[52], characters[53], characters[54], characters[55], characters[56]];
-export const set13 = [characters[57], characters[58], characters[59]];
-export const set14 = [characters[60], characters[61], characters[62], characters[63], characters[64]];
-export const set15 = [characters[65], characters[66], characters[67], characters[68], characters[69]];
+const blankSpace = { hiragana: '', katakana: '', romaji: '' };
+
+export const sets: Sets = {
+	'1': [characters[1], characters[2], characters[3], characters[4], characters[5]], // a, i, u, e, o
+	'2': [characters[6], characters[7], characters[8], characters[9], characters[10]], // ka, ki, ku, ke, ko	}
+	'3': [characters[11], characters[12], characters[13], characters[14], characters[15]], // sa, shi, su, se, so
+	'4': [characters[16], characters[17], characters[18], characters[19], characters[20]], // ta, chi, tsu, te, to
+	'5': [characters[21], characters[22], characters[23], characters[24], characters[25]], // na, ni, nu, ne, no
+	'6': [characters[26], characters[27], characters[28], characters[29], characters[30]], // ha, hi, fu, he, ho
+	'7': [characters[31], characters[32], characters[33], characters[34], characters[35]], // ma, mi, mu, me, mo
+	'8': [characters[36], characters[37], characters[38], blankSpace, blankSpace], // ya, yu, yo
+	'9': [characters[39], characters[40], characters[41], characters[42], characters[43]], // ra, ri, ru, re, ro
+	'10': [characters[44], characters[45], blankSpace, blankSpace, characters[46]], // wa, wo, , , n
+	'11': [characters[47], characters[48], characters[49], characters[50], characters[51]], // ga, gi, gu, ge, go
+	'12': [characters[52], characters[53], characters[54], characters[55], characters[56]], // za, ji, zu, ze, zo
+	'13': [characters[57], characters[58], characters[59]], // da, de, do
+	'14': [characters[60], characters[61], characters[62], characters[63], characters[64]], // ba, bi, bu, be, bo
+	'15': [characters[65], characters[66], characters[67], characters[68], characters[69]], // pa, pi, pu, pe, po
+};
