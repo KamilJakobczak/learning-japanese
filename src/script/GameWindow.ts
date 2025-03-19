@@ -1,14 +1,17 @@
 import { Sets } from '../data/db'; // Import the Sets type from the database module
 import Game from './Game';
 import Player from './Player';
-import Question from './Question';
 
 class GameWindow {
 	$sets: Sets; // Declare a property to hold the sets data
 	$currentPlayer: Player | null = null; // Declare a property to hold the current player
+	$game: Game | null;
+	$container: HTMLElement | null;
 	constructor(sets: Sets) {
 		this.$sets = sets; // Initialize the sets data
 		this.$currentPlayer = null; // Initialize the current player
+		this.$game = null;
+		this.$container = null;
 	}
 
 	render() {
@@ -16,14 +19,14 @@ class GameWindow {
 			this.createGameWindow();
 		}
 		if (this.$currentPlayer) {
-			const gameContainer = document.getElementById('hiraganaGame');
-
 			const gameForm = document.getElementById('gameForm');
 			gameForm?.remove();
 			const gameTitle = document.querySelector('h1');
 			gameTitle.textContent = `${this.$currentPlayer.getName()}'s Hiragana Game`;
+			this.$game?.render();
 		}
 	}
+
 	createGameWindow() {
 		// Create and append the main wrapper div
 		const wrapper = document.createElement('div');
@@ -34,7 +37,7 @@ class GameWindow {
 		const hiraganaGame = document.createElement('div');
 		hiraganaGame.id = 'hiraganaGame';
 		wrapper.appendChild(hiraganaGame);
-
+		this.$container = hiraganaGame;
 		// Create and append the game title
 		const hiraganaGameTitle = document.createElement('h1');
 		hiraganaGameTitle.textContent = `${this.$currentPlayer ? this.$currentPlayer : ''}` + 'Hiragana Game';
@@ -160,28 +163,37 @@ class GameWindow {
 			chaptersRadioWrapper.appendChild(chapterEl);
 		});
 	}
+	// Method to create and append the start game button
 	createGameButton(parent: HTMLElement) {
+		// Create a button element
 		const button = document.createElement('button');
-		button.type = 'submit';
-		button.textContent = 'Start Game';
-		parent.appendChild(button);
+		button.type = 'submit'; // Set the button type to 'submit' to trigger form submission
+		button.textContent = 'Start Game'; // Set the button text
+		parent.appendChild(button); // Append the button to the parent element
 	}
+
+	// Method to handle form submission
 	handleFormSubmit(event: Event) {
-		event.preventDefault();
-		console.log(event);
+		event.preventDefault(); // Prevent the default form submission behavior
+
+		// Get the form element from the event target
 		const form = event.target as HTMLFormElement;
+
+		// Extract form data using FormData API
 		const formData = new FormData(form);
-		const username = formData.get('username') as string;
-		const difficulty = formData.get('difficulty') as string;
-		const chapters = formData.getAll('chapter') as string[];
-		console.log(username, difficulty, chapters);
+		const username = formData.get('username') as string; // Get the username from the form
+		const difficulty = formData.get('difficulty') as string; // Get the selected difficulty level
+		const chapters = formData.getAll('chapter') as string[]; // Get all selected chapters
+
+		// Create a new Player instance with the provided username
 		const player = new Player(username);
-		this.$currentPlayer = player;
-		const question = new Question(difficulty, chapters, document.getElementById('hiraganaGame') as HTMLElement, this.$sets);
-		question.createQuestion();
-		// const game = new Game(player, difficulty, chapters);
-		// game.initialize();
-		// this.render();
+		this.$currentPlayer = player; // Set the current player
+
+		// Create a new Game instance with the current player, difficulty, and chapters
+		const game = new Game(this.$currentPlayer, difficulty, chapters, this.$container, this.$sets);
+		this.$game = game; // Set the current game instance
+
+		this.render(); // Render the game window
 	}
 }
 

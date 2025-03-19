@@ -1,71 +1,75 @@
-import { Sets } from '../data/db';
+import { QuestionData } from './Game';
 import { shuffleArray } from './utils/shuffleArray';
 
 class Question {
-	$chapters: string[];
-	$difficulty: string;
-	$sets: Sets;
+	$question: string;
+	$correctAnswer: string;
+	$incorrectAnswers: string[];
 	$container: HTMLElement;
-	// $question: string;
-	constructor(difficulty: string, chapters: string[], container: HTMLElement, sets: Sets) {
-		this.$difficulty = difficulty;
-		this.$chapters = chapters;
-		this.$sets = sets;
+	$questionContainer: HTMLElement;
+	constructor(container: HTMLElement, questionData: QuestionData) {
 		this.$container = container;
-		// this.$question = this.createQuestion();
+		this.$question = questionData.question;
+		this.$correctAnswer = questionData.correctAnswer;
+		this.$incorrectAnswers = questionData.incorrectAnswers;
+		this.$questionContainer = null;
 	}
 	render() {
-		// const questionContainer = document.createElement('div');
-		// questionContainer.classList.add('questionContainer');
-		// this.$container.appendChild(questionContainer);
+		this.createQuestionContainer();
+		this.createQuestion();
+		this.createAnswers();
+		this.createSubmitButton();
+	}
+	createQuestionContainer() {
+		const questionForm = document.createElement('form');
+		questionForm.classList.add('game__question');
+		this.$container.appendChild(questionForm);
+		const questionFieldset = document.createElement('fieldset');
+		questionFieldset.classList.add('game__question-fieldset');
+		questionFieldset.name = 'answer';
+		questionForm.appendChild(questionFieldset);
+
+		this.$questionContainer = questionFieldset;
+		questionForm.addEventListener('submit', this.handleSubmit.bind(this));
 	}
 	createQuestion() {
-		switch (this.$difficulty) {
-			case 'easy':
-				return this.createEasyQuestion();
-				break;
-			case 'medium':
-				break;
-			case 'hard':
-				break;
-			case 'extreme':
-				break;
-			default:
-				// return null;
-				break;
-		}
-		this.render();
+		const question = document.createElement('h2');
+		question.innerHTML = `What is the translation for: <span>${this.$question}</span>?`;
+
+		this.$questionContainer.appendChild(question);
 	}
-	createEasyQuestion() {
-		const filteredSets = this.$chapters.map(chapter => {
-			return this.$sets[chapter];
+	createAnswers() {
+		const answers = [this.$correctAnswer, ...this.$incorrectAnswers];
+		const shuffledAnswers = shuffleArray(answers);
+		shuffledAnswers.map(answer => {
+			const radioInput = document.createElement('input');
+			radioInput.type = 'radio';
+			radioInput.name = 'answer';
+			radioInput.value = answer;
+			const label = document.createElement('label');
+			label.textContent = answer;
+			this.$questionContainer.appendChild(radioInput);
+			this.$questionContainer.appendChild(label);
 		});
-		const joinedSets = filteredSets.flat();
-		const randomSets = shuffleArray(joinedSets);
-
-		const questions = randomSets.map(set => {
-			return set.hiragana;
-		});
-		const correctAnswers = randomSets.map(set => {
-			return set.romaji;
-		});
-
-		const incorrectAnswers = (): string[] => {
-			const incorrectAnswers: string[] = [];
-			for (let i = 0; i < correctAnswers.length; i++) {
-				const answers = correctAnswers.filter((answer: string) => answer !== correctAnswers[i]);
-				const random3Answers = shuffleArray(answers).slice(0, 3);
-				console.log(random3Answers);
-				incorrectAnswers.push(...random3Answers);
-			}
-			return incorrectAnswers;
-		};
-		const questionsData = {
-			questions,
-			correctAnswers,
-			incorrectAnswers: incorrectAnswers(),
-		};
-		console.log(questionsData);
+	}
+	createSubmitButton() {
+		const submitButton = document.createElement('button');
+		submitButton.type = 'submit';
+		submitButton.textContent = 'Submit';
+		this.$questionContainer.appendChild(submitButton);
+	}
+	handleSubmit(event: Event) {
+		event.preventDefault();
+		const form = event.target as HTMLFormElement;
+		const formData = new FormData(form);
+		const answer = formData.get('answer') as string;
+		this.checkAnswer(answer);
+	}
+	checkAnswer(answer: string) {
+		if (answer === this.$correctAnswer) {
+			console.log('GOOD ANSWER');
+			return true;
+		} else return false;
 	}
 }
 
