@@ -90,9 +90,9 @@ export const sets: Sets = {
 	'5': [characters[21], characters[22], characters[23], characters[24], characters[25]], // na, ni, nu, ne, no
 	'6': [characters[26], characters[27], characters[28], characters[29], characters[30]], // ha, hi, fu, he, ho
 	'7': [characters[31], characters[32], characters[33], characters[34], characters[35]], // ma, mi, mu, me, mo
-	'8': [characters[36], characters[37], characters[38], blankSpace, blankSpace], // ya, yu, yo
+	'8': [characters[36], characters[37], characters[38]], // ya, yu, yo
 	'9': [characters[39], characters[40], characters[41], characters[42], characters[43]], // ra, ri, ru, re, ro
-	'10': [characters[44], characters[45], blankSpace, blankSpace, characters[46]], // wa, wo, , , n
+	'10': [characters[44], characters[45], characters[46]], // wa, wo, , , n
 	'11': [characters[47], characters[48], characters[49], characters[50], characters[51]], // ga, gi, gu, ge, go
 	'12': [characters[52], characters[53], characters[54], characters[55], characters[56]], // za, ji, zu, ze, zo
 	'13': [characters[57], characters[58], characters[59]], // da, de, do

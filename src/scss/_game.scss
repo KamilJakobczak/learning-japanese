@@ -5,9 +5,6 @@
 	align-items: center;
 	gap: 50px;
 	#hiraganaGame {
-		display: flex;
-		flex-direction: column;
-		gap: 20px;
 		width: 1200px;
 		min-height: 500px;
 		margin: 50px auto 0;
@@ -27,10 +24,14 @@
 			font-weight: 500;
 		}
 	}
-	.hiraganaGame {
+	.gameForm {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
 		&__username {
 			display: flex;
 			gap: 20px;
+			border: none;
 			label {
 			}
 			input#username {
@@ -39,6 +40,7 @@
 		&__difficulty {
 			display: flex;
 			gap: 20px;
+			border: none;
 			label {
 			}
 			&_radioWrapper {
@@ -53,6 +55,7 @@
 		&__range {
 			display: flex;
 			gap: 20px;
+			border: none;
 			label {
 			}
 			&_radioWrapper {
@@ -72,6 +75,26 @@
 						font-weight: 400;
 					}
 				}
+			}
+		}
+		button {
+			width: 60%;
+			margin: 20px auto 0;
+			padding: 15px 0;
+			font-size: 2rem;
+			font-weight: 500;
+			letter-spacing: 4px;
+			text-transform: uppercase;
+			cursor: pointer;
+			border: none;
+			border-radius: 10px;
+			background: #040461;
+			color: white;
+			transition: 0.5s;
+			transform-origin: center;
+			&:hover {
+				// font-size: 2.5rem;
+				letter-spacing: 10px;
 			}
 		}
 	}
