@@ -42,14 +42,18 @@ class Question {
 		const answers = [this.$correctAnswer, ...this.$incorrectAnswers];
 		const shuffledAnswers = shuffleArray(answers);
 		shuffledAnswers.map(answer => {
+			const answerWrapper = document.createElement('div');
+			answerWrapper.classList.add('game__answer');
 			const radioInput = document.createElement('input');
 			radioInput.type = 'radio';
 			radioInput.name = 'answer';
 			radioInput.value = answer;
 			const label = document.createElement('label');
 			label.textContent = answer;
-			this.$questionContainer.appendChild(radioInput);
-			this.$questionContainer.appendChild(label);
+			label.innerHTML = radioInput.outerHTML + label.textContent;
+
+			answerWrapper.appendChild(label);
+			this.$questionContainer.appendChild(answerWrapper);
 		});
 	}
 	createSubmitButton() {
