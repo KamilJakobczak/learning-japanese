@@ -11,12 +11,14 @@ interface PreGameFormProps {
 }
 
 class PreGameForm {
+	$id: string;
 	$parent: HTMLElement;
 	$sets: Sets;
 	$setCurrentPlayer: (player: Player) => void;
 	$setGame: (game: Game) => void;
 	$rerender: () => void;
 	constructor({ parent, sets, setCurrentPlayer, setGame, rerender }: PreGameFormProps) {
+		this.$id = 'gameForm';
 		this.$sets = sets;
 		this.$parent = parent;
 		this.$setCurrentPlayer = setCurrentPlayer;
@@ -28,15 +30,15 @@ class PreGameForm {
 		this.createForm();
 	}
 	unmount() {
-		const gameForm = document.getElementById('gameForm');
+		const gameForm = document.getElementById(this.$id);
 		gameForm?.remove();
 	}
 
 	createForm() {
 		// Create and append the game form
 		const form = document.createElement('form');
-		form.id = 'gameForm';
-		form.classList.add('gameForm');
+		form.id = this.$id;
+		form.classList.add(this.$id);
 		this.$parent.appendChild(form);
 		// Create and append the username input section
 		this.createUsernameInput(form);
@@ -55,7 +57,7 @@ class PreGameForm {
 	// Method to create and append the username input section
 	createUsernameInput(parent: HTMLElement) {
 		const usernameWrapper = document.createElement('fieldset');
-		usernameWrapper.classList.add('gameForm__username');
+		usernameWrapper.classList.add(`${this.$id}__username`);
 		parent.appendChild(usernameWrapper);
 
 		const usernameLabel = document.createElement('label');
@@ -74,7 +76,7 @@ class PreGameForm {
 	createDifficultySelection(parent: HTMLElement) {
 		// Create and append the difficulty selection fieldset
 		const difficultyWrapper = document.createElement('fieldset');
-		difficultyWrapper.classList.add('gameForm__difficulty');
+		difficultyWrapper.classList.add(`${this.$id}__difficulty`);
 		parent.appendChild(difficultyWrapper);
 
 		// Create and append the difficulty label
@@ -85,7 +87,7 @@ class PreGameForm {
 
 		// Create and append the difficulty radio buttons wrapper
 		const difficultyRadioWrapper = document.createElement('div');
-		difficultyRadioWrapper.classList.add('gameForm__difficulty_radioWrapper');
+		difficultyRadioWrapper.classList.add(`${this.$id}__difficulty_radioWrapper`);
 		difficultyWrapper.appendChild(difficultyRadioWrapper);
 
 		// Define the difficulty levels
@@ -111,7 +113,7 @@ class PreGameForm {
 	createChaptersSelection(parent: HTMLElement) {
 		// Create and append the chapters selection fieldset
 		const rangeWrapper = document.createElement('fieldset');
-		rangeWrapper.classList.add('gameForm__range');
+		rangeWrapper.classList.add(`${this.$id}__range`);
 		parent.appendChild(rangeWrapper);
 
 		// Create and append the chapters label
@@ -121,7 +123,7 @@ class PreGameForm {
 
 		// Create and append the chapters radio buttons wrapper
 		const chaptersRadioWrapper = document.createElement('div');
-		chaptersRadioWrapper.classList.add('gameForm__range_radioWrapper');
+		chaptersRadioWrapper.classList.add(`${this.$id}__range_radioWrapper`);
 		rangeWrapper.appendChild(chaptersRadioWrapper);
 
 		// Get the chapters from the sets data
@@ -150,14 +152,16 @@ class PreGameForm {
 			chaptersRadioWrapper.appendChild(chapterEl);
 		});
 	}
+
 	// Method to create and append the start game button
 	createGameButton(parent: HTMLElement) {
 		// Create a button element
 		const button = document.createElement('button');
-		button.type = 'submit'; // Set the button type to 'submit' to trigger form submission
-		button.textContent = 'Start Game'; // Set the button text
-		parent.appendChild(button); // Append the button to the parent element
+		button.type = 'submit';
+		button.textContent = 'Start Game';
+		parent.appendChild(button);
 	}
+
 	// Method to handle form submission
 	handleFormSubmit(event: Event) {
 		event.preventDefault(); // Prevent the default form submission behavior
@@ -167,17 +171,18 @@ class PreGameForm {
 
 		// Extract form data using FormData API
 		const formData = new FormData(form);
-		const username = formData.get('username') as string; // Get the username from the form
+		const username = formData.get('username') as string; // Get the username
 		const difficulty = formData.get('difficulty') as string; // Get the selected difficulty level
 		const chapters = formData.getAll('chapter') as string[]; // Get all selected chapters
 
-		// Create a new Player instance with the provided username
+		// Create a new Player instance
 		const player = new Player(username);
 		this.$setCurrentPlayer(player); // Set the current player
 
 		// Create a new Game instance with the current player, difficulty, and chapters
 		const game = new Game(player, difficulty, chapters, this.$parent, this.$sets);
 		this.$setGame(game); // Set the current game instance
+
 		this.unmount(); // Unmount the form
 		this.$rerender(); // Rerender the game window
 	}

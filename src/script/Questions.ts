@@ -1,6 +1,12 @@
 import { Sets } from '../data/db';
 import { shuffleArray } from './utils/shuffleArray';
 
+export interface QuestionsData {
+	questions: string[];
+	correctAnswers: string[];
+	incorrectAnswers: string[][];
+}
+
 class Questions {
 	$chapters: string[];
 	$difficulty: string;
@@ -43,10 +49,10 @@ class Questions {
 		const joinedSets = filteredSets.flat();
 		const randomSets = shuffleArray(joinedSets);
 
-		const questions = randomSets.map(set => {
+		const questions: string[] = randomSets.map(set => {
 			return set.hiragana;
 		});
-		const correctAnswers = randomSets.map(set => {
+		const correctAnswers: string[] = randomSets.map(set => {
 			return set.romaji;
 		});
 
@@ -61,7 +67,7 @@ class Questions {
 
 			return incorrectAnswers;
 		};
-		const questionsData = {
+		const questionsData: QuestionsData = {
 			questions,
 			correctAnswers,
 			incorrectAnswers: incorrectAnswers(),
