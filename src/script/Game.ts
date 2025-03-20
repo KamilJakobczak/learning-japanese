@@ -20,7 +20,13 @@ class Game {
 	$questionsData: QuestionsData;
 	$currentQuestion: number;
 
-	constructor(player: Player, difficulty: string, chapters: string[], container: HTMLElement, sets: Sets) {
+	constructor(
+		player: Player,
+		difficulty: string,
+		chapters: string[],
+		container: HTMLElement,
+		sets: Sets
+	) {
 		this.$player = player;
 		this.$difficulty = difficulty;
 		this.$chapters = chapters;
@@ -31,16 +37,44 @@ class Game {
 		this.$score = 0;
 		this.$currentQuestion = 0;
 	}
+	setScore() {
+		this.$score++;
+	}
+	getScore() {
+		return this.$score;
+	}
+	getGameId() {
+		return this.$gameId;
+	}
+	getCurrentQuestion() {
+		return this.$currentQuestion;
+	}
+	setCurrentQuestion() {
+		console.log(this.$currentQuestion);
+		this.$currentQuestion += 1;
+	}
+
 	render() {
-		const gameRenderer = new GameRenderer(this.$appContainer, this.$questionsData, this.$currentQuestion);
+		const gameRenderer = new GameRenderer(
+			this.$appContainer,
+			this.$questionsData,
+			this.$currentQuestion,
+			this.setCurrentQuestion.bind(this),
+			this.setScore.bind(this),
+			this.render.bind(this),
+			this.getScore.bind(this)
+		);
 		gameRenderer.render();
+		console.log(this.getCurrentQuestion());
 	}
 	createQuestionsData() {
 		const questions = new Questions(this.$difficulty, this.$chapters, this.$sets);
 		return questions.createQuestions();
 	}
 	createGameId() {
-		return `${this.$player.getName()}-${this.$difficulty}-${this.$chapters.join('-')}-${Date.now()}`;
+		return `${this.$player.getName()}-${this.$difficulty}-${this.$chapters.join(
+			'-'
+		)}-${Date.now()}`;
 	}
 }
 export default Game;

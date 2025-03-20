@@ -1,0 +1,102 @@
+#wrapper {
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 50px;
+	#hiraganaGame {
+		width: 1200px;
+		min-height: 500px;
+		margin: 60px auto 0;
+		padding-left: 20px;
+		padding-right: 20px;
+		border: 5px solid #040461;
+		border-radius: 10px;
+		box-shadow: 0px 9px 25px 5px #040461;
+		font-size: 2rem;
+		h1 {
+			text-align: center;
+			font-size: 3rem;
+			color: #040461;
+			margin: 15px 0;
+			letter-spacing: 2px;
+			text-transform: uppercase;
+			font-weight: 500;
+		}
+	}
+	.gameForm {
+		display: flex;
+		flex-direction: column;
+		gap: 20px;
+		margin-top: 40px;
+		&__username {
+			display: flex;
+			gap: 20px;
+			border: none;
+			label {
+			}
+			input#username {
+			}
+		}
+		&__difficulty {
+			display: flex;
+			gap: 20px;
+			border: none;
+			label {
+			}
+			&_radioWrapper {
+				display: flex;
+				gap: 10px;
+				input {
+				}
+				label {
+				}
+			}
+		}
+		&__range {
+			display: flex;
+			gap: 20px;
+			border: none;
+			label {
+			}
+			&_radioWrapper {
+				display: flex;
+				gap: 10px;
+				flex-direction: row;
+				flex-wrap: wrap;
+				> div {
+					flex-basis: 30%;
+					display: flex;
+					flex-direction: row;
+					gap: 10px;
+					input {
+					}
+					label {
+						font-family: 'Noto Sans JP', sans-serif;
+						font-weight: 400;
+					}
+				}
+			}
+		}
+		button {
+			width: 60%;
+			margin: 20px auto 0;
+			padding: 15px 0;
+			font-size: 2rem;
+			font-weight: 500;
+			letter-spacing: 4px;
+			text-transform: uppercase;
+			cursor: pointer;
+			border: none;
+			border-radius: 10px;
+			background: #040461;
+			color: white;
+			transition: 0.5s;
+			transform-origin: center;
+			&:hover {
+				// font-size: 2.5rem;
+				letter-spacing: 10px;
+			}
+		}
+	}
+}

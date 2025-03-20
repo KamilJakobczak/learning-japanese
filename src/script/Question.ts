@@ -7,12 +7,27 @@ class Question {
 	$incorrectAnswers: string[];
 	$container: HTMLElement;
 	$questionContainer: HTMLElement;
-	constructor(container: HTMLElement, questionData: QuestionData) {
+	$setCurrentQuestion: () => void;
+	$setScore: () => void;
+	$rerender: () => void;
+	$unmountGameContainer: () => void;
+	constructor(
+		container: HTMLElement,
+		questionData: QuestionData,
+		setCurrentQuestion: () => void,
+		setScore: () => void,
+		rerender: () => void,
+		unmountGameContainer: () => void
+	) {
 		this.$container = container;
 		this.$question = questionData.question;
 		this.$correctAnswer = questionData.correctAnswer;
 		this.$incorrectAnswers = questionData.incorrectAnswers;
 		this.$questionContainer = null;
+		this.$setCurrentQuestion = setCurrentQuestion;
+		this.$setScore = setScore;
+		this.$rerender = rerender;
+		this.$unmountGameContainer = unmountGameContainer;
 	}
 	render() {
 		if (!this.$questionContainer) {
@@ -74,8 +89,14 @@ class Question {
 	checkAnswer(answer: string) {
 		if (answer === this.$correctAnswer) {
 			console.log('GOOD ANSWER');
-			return true;
-		} else return false;
+			this.$setScore();
+		} else {
+			console.log('WRONG ANSWER');
+		}
+		this.$setCurrentQuestion();
+		this.$container.innerHTML = '';
+		this.$unmountGameContainer();
+		this.$rerender();
 	}
 }
 
