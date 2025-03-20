@@ -15,7 +15,9 @@ class Question {
 		this.$questionContainer = null;
 	}
 	render() {
-		this.createQuestionContainer();
+		if (!this.$questionContainer) {
+			this.createQuestionContainer();
+		}
 		this.createQuestion();
 		this.createAnswers();
 		this.createSubmitButton();

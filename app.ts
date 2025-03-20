@@ -6,7 +6,7 @@ import { sets } from './src/data/db';
 const gameWindow = new GameWindow(sets);
 gameWindow.render();
 
-const container = document.querySelector('.wrapper');
+const container = document.getElementById('wrapper');
 const hiraganaTable = new Table(container as HTMLElement, 'hiragana', sets);
 hiraganaTable.render();
 
