@@ -5,40 +5,33 @@ import Question from './Question';
 class GameRenderer {
 	$appContainer: HTMLElement;
 	$questionsData: QuestionsData;
-	$currentQuestion: number;
 	$gameContainer: HTMLElement;
 	$questionCounter: HTMLElement;
-	$setCurrentQuestion: () => void;
-	$setScore: () => void;
-	$rerender: () => void;
 	$getScore: () => number;
+	$onQuestionAnswered: (result: boolean) => void;
+	$getCurrentQuestion: () => number;
 	constructor(
 		container: HTMLElement,
 		questionsData: QuestionsData,
-		currentQuestion: number,
-		setCurrentQuestion: () => void,
-		setScore: () => void,
-		rerender: () => void,
-		getScore: () => number
+		getCurrentQuestion: () => number,
+		getScore: () => number,
+		onQuestionAnswered: (result: boolean) => void
 	) {
-		this.$currentQuestion = currentQuestion;
 		this.$questionsData = questionsData;
 		this.$appContainer = container;
 		this.$questionsData = questionsData;
+		this.$getCurrentQuestion = getCurrentQuestion;
+		this.$getScore = getScore;
+		this.$onQuestionAnswered = onQuestionAnswered;
 		this.$gameContainer = this.createGameContainer();
 		this.$questionCounter = this.createQuestionCounter();
-		this.$setCurrentQuestion = setCurrentQuestion;
-		this.$setScore = setScore;
-		this.$rerender = rerender;
-		this.$getScore = getScore;
 	}
 
 	render() {
-		if (this.$currentQuestion >= this.$questionsData.questions.length) {
+		if (this.$getCurrentQuestion() >= this.$questionsData.questions.length) {
 			this.displayResults();
 			return;
 		} else {
-			// this.updateQuestionCounter();
 			this.createQuestion();
 		}
 	}
@@ -52,36 +45,41 @@ class GameRenderer {
 		return gameContainer;
 	}
 	createQuestionCounter() {
-		if (this.$currentQuestion >= this.$questionsData.questions.length) {
+		if (this.$getCurrentQuestion() >= this.$questionsData.questions.length) {
 			return;
 		}
 		const questionCounter = document.createElement('h3');
 		questionCounter.classList.add('game__questionCounter');
-		questionCounter.textContent = `Question ${this.$currentQuestion + 1} of ${
-			this.$questionsData.questions.length
-		}`;
+		questionCounter.textContent = `Question ${
+			this.$getCurrentQuestion() + 1
+		} of ${this.$questionsData.questions.length}`;
 		this.$gameContainer.appendChild(questionCounter);
 		return questionCounter;
 	}
 
 	createQuestion() {
 		const questionData: QuestionData = {
-			question: this.$questionsData.questions[this.$currentQuestion],
-			correctAnswer: this.$questionsData.correctAnswers[this.$currentQuestion],
-			incorrectAnswers: this.$questionsData.incorrectAnswers[this.$currentQuestion],
+			question: this.$questionsData.questions[this.$getCurrentQuestion()],
+			correctAnswer:
+				this.$questionsData.correctAnswers[this.$getCurrentQuestion()],
+			incorrectAnswers:
+				this.$questionsData.incorrectAnswers[this.$getCurrentQuestion()],
 		};
 
 		const question = new Question(
 			this.$gameContainer,
 			questionData,
-			this.$setCurrentQuestion,
-			this.$setScore,
-			this.$rerender,
-			this.unmount.bind(this)
+			this.$onQuestionAnswered
 		);
 		question.render();
 	}
+	renderNextQuestion() {
+		this.$gameContainer.innerHTML = '';
+		this.createQuestionCounter();
+		this.createQuestion();
+	}
 	displayResults() {
+		this.$gameContainer.innerHTML = '';
 		const resultContainer = document.createElement('div');
 		resultContainer.classList.add('game__result');
 		const result = document.createElement('h3');

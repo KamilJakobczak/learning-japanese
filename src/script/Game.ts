@@ -8,8 +8,11 @@ export interface QuestionData {
 	correctAnswer: string;
 	incorrectAnswers: string[];
 }
+const INITIAL_SCORE = 0;
+const INITIAL_QUESTION = 0;
 
 class Game {
+	$gameRenderer: GameRenderer;
 	$gameId: string;
 	$player: Player;
 	$difficulty: string;
@@ -33,48 +36,66 @@ class Game {
 		this.$gameId = this.createGameId();
 		this.$appContainer = container;
 		this.$sets = sets;
-		this.$questionsData = this.createQuestionsData();
-		this.$score = 0;
-		this.$currentQuestion = 0;
-	}
-	setScore() {
-		this.$score++;
-	}
-	getScore() {
-		return this.$score;
-	}
-	getGameId() {
-		return this.$gameId;
-	}
-	getCurrentQuestion() {
-		return this.$currentQuestion;
-	}
-	setCurrentQuestion() {
-		console.log(this.$currentQuestion);
-		this.$currentQuestion += 1;
-	}
-
-	render() {
-		const gameRenderer = new GameRenderer(
+		this.$questionsData = new Questions(
+			difficulty,
+			chapters,
+			sets
+		).createQuestions();
+		this.$score = INITIAL_SCORE;
+		this.$currentQuestion = INITIAL_QUESTION;
+		this.$gameRenderer = new GameRenderer(
 			this.$appContainer,
 			this.$questionsData,
-			this.$currentQuestion,
-			this.setCurrentQuestion.bind(this),
-			this.setScore.bind(this),
-			this.render.bind(this),
-			this.getScore.bind(this)
+			this.getCurrentQuestion.bind(this),
+			this.getScore.bind(this),
+			this.onQuestionAnswered.bind(this)
 		);
-		gameRenderer.render();
-		console.log(this.getCurrentQuestion());
 	}
-	createQuestionsData() {
-		const questions = new Questions(this.$difficulty, this.$chapters, this.$sets);
-		return questions.createQuestions();
+
+	getScore(): number {
+		return this.$score;
 	}
-	createGameId() {
-		return `${this.$player.getName()}-${this.$difficulty}-${this.$chapters.join(
-			'-'
-		)}-${Date.now()}`;
+	getGameId(): string {
+		return this.$gameId;
+	}
+	getCurrentQuestion(): number {
+		return this.$currentQuestion;
+	}
+	render() {
+		this.$gameRenderer.render();
+	}
+
+	incrementCurrentQuestion(): void {
+		this.$currentQuestion++;
+	}
+	incrementScore(): void {
+		this.$score++;
+	}
+
+	createGameId(): string {
+		if (!this.$player) {
+			throw new Error('Player not found');
+		}
+		return `${this.$player.getName()}-${
+			this.$difficulty
+		}-${this.$chapters.join('-')}-${Date.now()}`;
+	}
+
+	isGameFinished(): boolean {
+		return this.$currentQuestion >= this.$questionsData.questions.length;
+	}
+
+	onQuestionAnswered(result: boolean) {
+		if (result) {
+			this.incrementScore();
+		}
+		this.incrementCurrentQuestion();
+
+		if (this.isGameFinished()) {
+			this.$gameRenderer.displayResults();
+		} else {
+			this.$gameRenderer.renderNextQuestion();
+		}
 	}
 }
 export default Game;
