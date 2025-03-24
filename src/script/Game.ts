@@ -50,6 +50,7 @@ class Game {
 			this.getScore.bind(this),
 			this.onQuestionAnswered.bind(this)
 		);
+		console.log(player, difficulty, chapters, container, sets);
 	}
 
 	getScore(): number {

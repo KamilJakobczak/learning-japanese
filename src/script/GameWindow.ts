@@ -7,8 +7,10 @@ class GameWindow {
 	$sets: Sets; // Declare a property to hold the sets data
 	$currentPlayer: Player | null = null; // Declare a property to hold the current player
 	$game: Game | null;
+	$container: HTMLElement | null;
 
 	constructor(sets: Sets) {
+		this.$container = null;
 		this.$sets = sets; // Initialize the sets data
 		this.$currentPlayer = null; // Initialize the current player
 		this.$game = null;
@@ -21,13 +23,12 @@ class GameWindow {
 	}
 
 	render() {
-		if (!this.$currentPlayer) {
+		if (this.$game) {
+			this.renderGame(this.$game);
+		} else {
 			const container = this.createGameWindow();
+			this.$container = container;
 			this.renderPreGameForm(container);
-		}
-
-		if (this.$currentPlayer) {
-			this.renderGame();
 		}
 	}
 	renderPreGameForm(container: HTMLElement) {
@@ -35,9 +36,7 @@ class GameWindow {
 		const pregameForm = new PreGameForm({
 			parent: container,
 			sets: this.$sets,
-			setCurrentPlayer: this.setCurrentPlayer.bind(this),
-			setGame: this.setGame.bind(this),
-			rerender: this.render.bind(this),
+			onPregameFormSubmit: this.onPregameFormSubmit.bind(this),
 		});
 		pregameForm.render();
 	}
@@ -54,16 +53,36 @@ class GameWindow {
 
 		// Create and append the game title
 		const hiraganaGameTitle = document.createElement('h1');
-		hiraganaGameTitle.textContent = `${this.$currentPlayer?.getName() || ''} Hiragana Game`; // Update the game title to include the player's name
+		hiraganaGameTitle.textContent = `${
+			this.$currentPlayer?.getName() || ''
+		} Hiragana Game`; // Update the game title to include the player's name
 		hiraganaGame.appendChild(hiraganaGameTitle);
 		return hiraganaGame;
 	}
-	renderGame() {
+	renderGame(game: Game) {
 		const gameTitle = document.querySelector('h1');
 		if (gameTitle) {
 			gameTitle.textContent = `${this.$currentPlayer?.getName()}'s Hiragana Game`;
 		}
-		this.$game?.render();
+
+		game.render();
+	}
+	onPregameFormSubmit(
+		username: string,
+		difficulty: string,
+		chapters: string[]
+	) {
+		const player = new Player(username);
+		this.setCurrentPlayer(player);
+		const game = new Game(
+			player,
+			difficulty,
+			chapters,
+			this.$container,
+			this.$sets
+		);
+		this.setGame(game);
+		this.render();
 	}
 }
 

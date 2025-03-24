@@ -1,72 +1,74 @@
+import { createButton } from './utils/createButton';
+import { createFormFieldset } from './utils/createFormFieldset';
+import { createInputs } from './utils/createInputs';
+
+const CLASS_NAMES = {
+	QUESTION: 'game__question',
+	QUESTION_FIELDSET: 'game__question-fieldset',
+	ANSWER: 'game__answer',
+};
 class QuestionRenderer {
 	$answers: string[];
 	$container: HTMLElement;
 	$question: string;
 	$checkAnswer: (answer: string) => void;
-	$questionContainer: HTMLElement | null;
+	$form: HTMLFormElement | null;
+
 	constructor(
 		question: string,
 		answers: string[],
 		checkAnswer: (answer: string) => void,
 		container: HTMLElement
 	) {
+		this.$container = container;
 		this.$question = question;
-		this.$questionContainer = null;
+
 		this.$answers = answers;
 		this.$checkAnswer = checkAnswer;
-		this.$container = container;
+		this.$form = null;
 	}
+
 	render() {
-		if (!this.$questionContainer) {
-			this.createQuestionContainer();
+		if (!this.$form) {
+			this.createForm();
 		}
 		this.renderQuestion();
 		this.renderAnswers();
 		this.renderSubmitButton();
 	}
-	createQuestionContainer() {
+	createForm() {
 		const questionForm = document.createElement('form');
-		questionForm.classList.add('game__question');
+		questionForm.classList.add(CLASS_NAMES.QUESTION);
+		this.$form = questionForm;
 		this.$container.appendChild(questionForm);
-		const questionFieldset = document.createElement('fieldset');
-		questionFieldset.classList.add('game__question-fieldset');
-		questionFieldset.name = 'answer';
-		questionForm.appendChild(questionFieldset);
 
-		this.$questionContainer = questionFieldset;
-		questionForm.addEventListener('submit', event => this.handleSubmit(event));
+		questionForm.addEventListener('submit', event =>
+			this.handleSubmit(event)
+		);
 	}
 	renderQuestion() {
+		if (!this.$form) {
+			console.error('Question container not found');
+			return;
+		}
 		const question = document.createElement('h2');
 		question.innerHTML = `What is the translation for: <span>${this.$question}</span>?`;
-
-		this.$questionContainer.appendChild(question);
+		this.$form.appendChild(question);
 	}
+
 	renderAnswers() {
-		this.$answers.map((answer, index) => {
-			const answerWrapper = document.createElement('div');
-			answerWrapper.classList.add('game__answer');
-			const radioInput = document.createElement('input');
-			radioInput.type = 'radio';
-			radioInput.id = `answer-${index}`;
-			radioInput.name = 'answer';
-			radioInput.value = answer;
-			const label = document.createElement('label');
-			label.htmlFor = `answer-${index}`;
-			// label.textContent = answer;
-			// label.innerHTML = radioInput.outerHTML + label.textContent;
-			label.appendChild(radioInput);
-			const textNode = document.createTextNode(answer);
-			label.appendChild(textNode);
-			answerWrapper.appendChild(label);
-			this.$questionContainer.appendChild(answerWrapper);
+		createInputs({
+			form: this.$form,
+			className: CLASS_NAMES.ANSWER,
+			type: 'radio',
+			name: 'answer',
+			required: true,
+			elements: this.$answers,
 		});
 	}
+
 	renderSubmitButton() {
-		const submitButton = document.createElement('button');
-		submitButton.type = 'submit';
-		submitButton.textContent = 'Submit';
-		this.$questionContainer.appendChild(submitButton);
+		createButton(this.$form, 'submit', 'submit');
 	}
 
 	handleSubmit(event: Event) {
@@ -74,6 +76,11 @@ class QuestionRenderer {
 		const form = event.target as HTMLFormElement;
 		const formData = new FormData(form);
 		const answer = formData.get('answer') as string;
+
+		if (!answer) {
+			alert('Please select an answer!');
+			return;
+		}
 		this.$checkAnswer(answer);
 	}
 }

@@ -6,7 +6,7 @@ class GameRenderer {
 	$appContainer: HTMLElement;
 	$questionsData: QuestionsData;
 	$gameContainer: HTMLElement;
-	$questionCounter: HTMLElement;
+	$questionCounter: HTMLElement | null;
 	$getScore: () => number;
 	$onQuestionAnswered: (result: boolean) => void;
 	$getCurrentQuestion: () => number;
@@ -24,7 +24,7 @@ class GameRenderer {
 		this.$getScore = getScore;
 		this.$onQuestionAnswered = onQuestionAnswered;
 		this.$gameContainer = this.createGameContainer();
-		this.$questionCounter = this.createQuestionCounter();
+		this.$questionCounter = this.renderQuestionCounter();
 	}
 
 	render() {
@@ -32,23 +32,32 @@ class GameRenderer {
 			this.displayResults();
 			return;
 		} else {
+			this.$gameContainer.innerHTML = '';
+			this.renderQuestionCounter();
 			this.createQuestion();
 		}
 	}
-	unmount() {
-		this.$gameContainer.remove();
-	}
+	// unmount() {
+	// 	this.$gameContainer.remove();
+	// }
 	createGameContainer() {
 		const gameContainer = document.createElement('div');
 		gameContainer.classList.add('gameContainer');
 		this.$appContainer.appendChild(gameContainer);
 		return gameContainer;
 	}
-	createQuestionCounter() {
-		if (this.$getCurrentQuestion() >= this.$questionsData.questions.length) {
-			return;
+	renderQuestionCounter(): null | HTMLElement {
+		if (!this.$questionsData || this.$questionsData.questions.length === 0) {
+			console.error('No questions available.');
 		}
+		if (this.$questionCounter) {
+			this.$questionCounter.textContent = `Question ${
+				this.$getCurrentQuestion() + 1
+			} of ${this.$questionsData.questions.length}`;
+		}
+
 		const questionCounter = document.createElement('h3');
+		questionCounter.setAttribute('role', 'status');
 		questionCounter.classList.add('game__questionCounter');
 		questionCounter.textContent = `Question ${
 			this.$getCurrentQuestion() + 1
@@ -74,14 +83,14 @@ class GameRenderer {
 		question.render();
 	}
 	renderNextQuestion() {
-		this.$gameContainer.innerHTML = '';
-		this.createQuestionCounter();
-		this.createQuestion();
+		this.render();
 	}
 	displayResults() {
 		this.$gameContainer.innerHTML = '';
+
 		const resultContainer = document.createElement('div');
 		resultContainer.classList.add('game__result');
+
 		const result = document.createElement('h3');
 		resultContainer.appendChild(result);
 		this.$gameContainer.appendChild(resultContainer);
