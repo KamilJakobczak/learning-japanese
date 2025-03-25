@@ -1,4 +1,5 @@
 import { Sets } from '../data/db';
+import { DIFFICULTY, SYLLABARY } from './enums/enums';
 import { shuffleArray } from './utils/shuffleArray';
 
 export interface QuestionsData {
@@ -9,40 +10,41 @@ export interface QuestionsData {
 
 class Questions {
 	$chapters: string[];
-	$difficulty: string;
+	$difficulty: DIFFICULTY;
 	$sets: Sets;
-
-	// $question: string;
-	constructor(difficulty: string, chapters: string[], sets: Sets) {
+	$syllabary: SYLLABARY;
+	constructor(
+		difficulty: DIFFICULTY,
+		syllabary: SYLLABARY,
+		chapters: string[],
+		sets: Sets
+	) {
 		this.$difficulty = difficulty;
 		this.$chapters = chapters;
 		this.$sets = sets;
-
-		// this.$question = this.createQuestion();
+		this.$syllabary = syllabary;
 	}
-	render() {
-		// const questionContainer = document.createElement('div');
-		// questionContainer.classList.add('questionContainer');
-		// this.$container.appendChild(questionContainer);
-	}
+	// render() {
+	// 	// const questionContainer = document.createElement('div');
+	// 	// questionContainer.classList.add('questionContainer');
+	// 	// this.$container.appendChild(questionContainer);
+	// }
 	createQuestions() {
 		switch (this.$difficulty) {
-			case 'easy':
-				return this.createEasyQuestion();
-				break;
-			case 'medium':
-				break;
-			case 'hard':
-				break;
-			case 'extreme':
-				break;
+			case DIFFICULTY.EASY:
+				return this.createEasyQuestions();
+			case DIFFICULTY.MEDIUM:
+				return this.createMediumQuestions();
+			case DIFFICULTY.HARD:
+				return this.createHardQuestions();
+			case DIFFICULTY.EXTREME:
+				return this.createExtremeQuestions();
 			default:
-				// return null;
-				break;
+				return;
 		}
-		this.render();
+		// this.render();
 	}
-	createEasyQuestion() {
+	createEasyQuestions(): QuestionsData {
 		const filteredSets = this.$chapters.map(chapter => {
 			return this.$sets[chapter];
 		});
@@ -59,7 +61,9 @@ class Questions {
 		const incorrectAnswers = (): string[][] => {
 			const incorrectAnswers: string[][] = [];
 			for (let i = 0; i < correctAnswers.length; i++) {
-				const answers = correctAnswers.filter((answer: string) => answer !== correctAnswers[i]);
+				const answers = correctAnswers.filter(
+					(answer: string) => answer !== correctAnswers[i]
+				);
 				const random3Answers = shuffleArray(answers).slice(0, 3);
 
 				incorrectAnswers.push(random3Answers);
@@ -73,6 +77,27 @@ class Questions {
 			incorrectAnswers: incorrectAnswers(),
 		};
 		return questionsData;
+	}
+	createMediumQuestions(): QuestionsData {
+		return {
+			questions: [''],
+			correctAnswers: [''],
+			incorrectAnswers: [['']],
+		};
+	}
+	createHardQuestions(): QuestionsData {
+		return {
+			questions: [''],
+			correctAnswers: [''],
+			incorrectAnswers: [['']],
+		};
+	}
+	createExtremeQuestions(): QuestionsData {
+		return {
+			questions: [''],
+			correctAnswers: [''],
+			incorrectAnswers: [['']],
+		};
 	}
 }
 

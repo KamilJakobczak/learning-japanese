@@ -1,4 +1,5 @@
 import { Sets } from '../data/db';
+import { DIFFICULTY, SYLLABARY } from './enums/enums';
 import GameRenderer from './GameRenderer';
 import Player from './Player';
 import Questions, { QuestionsData } from './Questions';
@@ -17,6 +18,7 @@ class Game {
 	$player: Player;
 	$difficulty: string;
 	$chapters: string[];
+	$syllabary: SYLLABARY;
 	$score: number;
 	$appContainer: HTMLElement;
 	$sets: Sets;
@@ -25,19 +27,22 @@ class Game {
 
 	constructor(
 		player: Player,
-		difficulty: string,
+		difficulty: DIFFICULTY,
+		syllabary: SYLLABARY,
 		chapters: string[],
 		container: HTMLElement,
 		sets: Sets
 	) {
 		this.$player = player;
 		this.$difficulty = difficulty;
+		this.$syllabary = syllabary;
 		this.$chapters = chapters;
 		this.$gameId = this.createGameId();
 		this.$appContainer = container;
 		this.$sets = sets;
 		this.$questionsData = new Questions(
 			difficulty,
+			syllabary,
 			chapters,
 			sets
 		).createQuestions();
@@ -50,7 +55,6 @@ class Game {
 			this.getScore.bind(this),
 			this.onQuestionAnswered.bind(this)
 		);
-		console.log(player, difficulty, chapters, container, sets);
 	}
 
 	getScore(): number {

@@ -23,7 +23,6 @@ export function createInputs(input: CreateInputs) {
 	const fieldset = createFormFieldset(className, form, name);
 
 	elements.forEach((element, index) => {
-		console.log(required);
 		const wrapper = document.createElement('div');
 		wrapper.classList.add(className + '_' + type);
 

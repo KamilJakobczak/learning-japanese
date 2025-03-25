@@ -2,17 +2,18 @@ import PreGameForm from './PreGameForm';
 import { Sets } from '../data/db'; // Import the Sets type from the database module
 import Game from './Game';
 import Player from './Player';
+import { DIFFICULTY, SYLLABARY } from './enums/enums';
 
 class GameWindow {
-	$sets: Sets; // Declare a property to hold the sets data
-	$currentPlayer: Player | null = null; // Declare a property to hold the current player
+	$sets: Sets;
+	$currentPlayer: Player | null = null;
 	$game: Game | null;
 	$container: HTMLElement | null;
 
 	constructor(sets: Sets) {
 		this.$container = null;
-		this.$sets = sets; // Initialize the sets data
-		this.$currentPlayer = null; // Initialize the current player
+		this.$sets = sets;
+		this.$currentPlayer = null;
 		this.$game = null;
 	}
 	setCurrentPlayer(player: Player) {
@@ -69,7 +70,8 @@ class GameWindow {
 	}
 	onPregameFormSubmit(
 		username: string,
-		difficulty: string,
+		difficulty: DIFFICULTY,
+		syllabary: SYLLABARY,
 		chapters: string[]
 	) {
 		const player = new Player(username);
@@ -77,6 +79,7 @@ class GameWindow {
 		const game = new Game(
 			player,
 			difficulty,
+			syllabary,
 			chapters,
 			this.$container,
 			this.$sets

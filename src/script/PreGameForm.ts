@@ -1,14 +1,15 @@
 import { Sets } from '../data/db';
-import Player from './Player';
 import { createInputs } from './utils/createInputs';
 import { createButton } from './utils/createButton';
+import { DIFFICULTY, SYLLABARY } from './enums/enums';
 
 interface PreGameFormProps {
 	parent: HTMLElement;
 	sets: Sets;
 	onPregameFormSubmit: (
 		username: string,
-		difficulty: string,
+		difficulty: DIFFICULTY,
+		syllabary: SYLLABARY,
 		chapters: string[]
 	) => void;
 }
@@ -25,17 +26,27 @@ const CLASS_NAMES = {
 class PreGameForm {
 	$parent: HTMLElement;
 	$sets: Sets;
-	$syllabaryLevels: ['hiragana', 'katakana', 'mixed'];
-	$difficultyLevels = ['easy', 'medium', 'hard', 'extreme'];
+	$syllabaryLevels: SYLLABARY[];
+	$difficultyLevels: DIFFICULTY[];
 	$form: HTMLFormElement | null;
 	$onPregameFormSubmit: (
 		username: string,
-		difficulty: string,
+		difficulty: DIFFICULTY,
+		syllabary: SYLLABARY,
 		chapters: string[]
 	) => void;
 	constructor({ parent, sets, onPregameFormSubmit }: PreGameFormProps) {
-		this.$difficultyLevels = ['easy', 'medium', 'hard', 'extreme'];
-		this.$syllabaryLevels = ['hiragana', 'katakana', 'mixed'];
+		this.$difficultyLevels = [
+			DIFFICULTY.EASY,
+			DIFFICULTY.MEDIUM,
+			DIFFICULTY.HARD,
+			DIFFICULTY.EXTREME,
+		];
+		this.$syllabaryLevels = [
+			SYLLABARY.HIRAGANA,
+			SYLLABARY.KATAKANA,
+			SYLLABARY.MIXED,
+		];
 		this.$sets = sets;
 		this.$parent = parent;
 		this.$form = null;
@@ -143,19 +154,18 @@ class PreGameForm {
 
 	// Method to handle form submission
 	handleFormSubmit(event: Event) {
-		event.preventDefault(); // Prevent the default form submission behavior
-
+		event.preventDefault();
 		// Get the form element from the event target
 		const form = event.target as HTMLFormElement;
-
 		// Extract form data using FormData API
 		const formData = new FormData(form);
-		const username = formData.get('username') as string; // Get the username
-		const difficulty = formData.get('difficulty') as string; // Get the selected difficulty level
-		const chapters = formData.getAll('chapter') as string[]; // Get all selected chapters
+		const username = formData.get('username') as string;
+		const difficulty = formData.get('difficulty') as DIFFICULTY;
+		const chapters = formData.getAll('chapter') as string[];
+		const syllabary = formData.get('syllabary') as SYLLABARY;
 
-		this.unmount(); // Unmount the form
-		this.$onPregameFormSubmit(username, difficulty, chapters); // Call the onPregameFormSubmit callback
+		this.unmount(); // Remove the form from the DOM
+		this.$onPregameFormSubmit(username, difficulty, syllabary, chapters);
 	}
 }
 
