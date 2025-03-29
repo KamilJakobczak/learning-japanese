@@ -2,7 +2,7 @@ import { createFormFieldset } from './createFormFieldset';
 
 interface CreateInputs {
 	form: HTMLFormElement;
-	// fieldset?: HTMLFieldSetElement;
+	fieldset?: HTMLFieldSetElement;
 	className: string;
 	type: 'radio' | 'checkbox' | 'text';
 	name: string;
@@ -11,16 +11,24 @@ interface CreateInputs {
 	labels?: string[];
 }
 export function createInputs(input: CreateInputs) {
-	const { form, className, type, name, required, elements, labels } = input;
+	const {
+		form,
+		fieldset: inputFieldset,
+		className,
+		type,
+		name,
+		required,
+		elements,
+		labels,
+	} = input;
 
-	// let fieldset: HTMLFieldSetElement;
+	let fieldset: HTMLFieldSetElement;
 
-	// if (!fieldset) {
-	// 	fieldset = createFormFieldset(className, form, name);
-	// } else {
-	// 	fieldset = input.fieldset;
-	// }
-	const fieldset = createFormFieldset(className, form, name);
+	if (!inputFieldset) {
+		fieldset = createFormFieldset(className, form, name);
+	} else {
+		fieldset = inputFieldset;
+	}
 
 	elements.forEach((element, index) => {
 		const wrapper = document.createElement('div');

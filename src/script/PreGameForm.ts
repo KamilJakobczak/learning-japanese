@@ -2,6 +2,7 @@ import { Sets } from '../data/db';
 import { createInputs } from './utils/createInputs';
 import { createButton } from './utils/createButton';
 import { DIFFICULTY, SYLLABARY } from './enums/enums';
+import { createFormFieldset } from './utils/createFormFieldset';
 
 interface PreGameFormProps {
 	parent: HTMLElement;
@@ -29,12 +30,14 @@ class PreGameForm {
 	$syllabaryLevels: SYLLABARY[];
 	$difficultyLevels: DIFFICULTY[];
 	$form: HTMLFormElement | null;
+	$selectedSyllabary: SYLLABARY;
 	$onPregameFormSubmit: (
 		username: string,
 		difficulty: DIFFICULTY,
 		syllabary: SYLLABARY,
 		chapters: string[]
 	) => void;
+	$chaptersContainer: HTMLFieldSetElement | null;
 	constructor({ parent, sets, onPregameFormSubmit }: PreGameFormProps) {
 		this.$difficultyLevels = [
 			DIFFICULTY.EASY,
@@ -51,6 +54,7 @@ class PreGameForm {
 		this.$parent = parent;
 		this.$form = null;
 		this.$onPregameFormSubmit = onPregameFormSubmit;
+		this.$chaptersContainer = null;
 	}
 
 	render() {
@@ -80,7 +84,7 @@ class PreGameForm {
 		this.createSyllabarySelection(form);
 
 		// Create and append the chapters selection section
-		this.createChaptersSelection(form);
+		this.createChaptersContainer(form);
 
 		// Create and append the start game button
 		this.createGameButton(form);
@@ -111,7 +115,7 @@ class PreGameForm {
 	}
 
 	createSyllabarySelection(parent: HTMLFormElement) {
-		createInputs({
+		const syllabary = createInputs({
 			form: parent,
 			className: CLASS_NAMES.SYLLABARY,
 			type: 'radio',
@@ -119,10 +123,30 @@ class PreGameForm {
 			required: true,
 			elements: this.$syllabaryLevels,
 		});
-	}
 
+		syllabary.addEventListener('change', (event: Event) => {
+			const target = event.target as HTMLInputElement;
+
+			this.$selectedSyllabary = target.value as SYLLABARY;
+			this.createChaptersSelection();
+		});
+	}
+	createChaptersContainer(parent: HTMLFormElement) {
+		const fieldset = createFormFieldset(
+			CLASS_NAMES.CHAPTERS,
+			parent,
+			'chapters'
+		);
+		this.$chaptersContainer = fieldset;
+	}
 	// Method to create and append the chapters selection section
-	createChaptersSelection(parent: HTMLFormElement) {
+	createChaptersSelection() {
+		Array.from(this.$chaptersContainer?.children).forEach((child, index) => {
+			if (index !== 0) {
+				child.remove();
+			}
+		});
+
 		// Get the chapters from the sets data
 		const chapters = Object.keys(this.$sets);
 		// Create an array of labels for the chapters
@@ -131,16 +155,29 @@ class PreGameForm {
 		chapters.forEach(chapter => {
 			labelText.length = 0;
 			this.$sets[chapter].forEach(character => {
-				labelText.push(character.hiragana);
+				switch (this.$selectedSyllabary) {
+					case SYLLABARY.HIRAGANA:
+						labelText.push(character.hiragana);
+						break;
+					case SYLLABARY.KATAKANA:
+						labelText.push(character.katakana);
+						break;
+					case SYLLABARY.MIXED:
+						labelText.push(character.hiragana);
+						labelText.push(character.katakana);
+						break;
+				}
 			});
 			labels.push(`${chapter} (${labelText.join(', ')})`);
 		});
+
 		// Create and append the chapters
 		createInputs({
-			form: parent,
+			form: this.$form,
+			fieldset: this.$chaptersContainer,
 			className: CLASS_NAMES.CHAPTERS,
 			type: 'checkbox',
-			name: 'chapter',
+			name: 'chapters',
 			required: false,
 			elements: chapters,
 			labels,
