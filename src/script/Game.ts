@@ -2,13 +2,8 @@ import { Sets } from '../data/db';
 import { DIFFICULTY, SYLLABARY } from './enums/enums';
 import GameRenderer from './GameRenderer';
 import Player from './Player';
-import Questions, { QuestionsData } from './Questions';
+import Questions, { QuestionData } from './Questions';
 
-export interface QuestionData {
-	question: string;
-	correctAnswer: string;
-	incorrectAnswers: string[];
-}
 const INITIAL_SCORE = 0;
 const INITIAL_QUESTION = 0;
 
@@ -22,7 +17,7 @@ class Game {
 	$score: number;
 	$appContainer: HTMLElement;
 	$sets: Sets;
-	$questionsData: QuestionsData;
+	$questionsData: QuestionData[];
 	$currentQuestion: number;
 
 	constructor(
@@ -87,7 +82,7 @@ class Game {
 	}
 
 	isGameFinished(): boolean {
-		return this.$currentQuestion >= this.$questionsData.questions.length;
+		return this.$currentQuestion >= this.$questionsData.length;
 	}
 
 	onQuestionAnswered(result: boolean) {

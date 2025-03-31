@@ -198,7 +198,7 @@ class PreGameForm {
 		const formData = new FormData(form);
 		const username = formData.get('username') as string;
 		const difficulty = formData.get('difficulty') as DIFFICULTY;
-		const chapters = formData.getAll('chapter') as string[];
+		const chapters = formData.getAll('chapters') as string[];
 		const syllabary = formData.get('syllabary') as SYLLABARY;
 
 		this.unmount(); // Remove the form from the DOM

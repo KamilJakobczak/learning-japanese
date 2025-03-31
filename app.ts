@@ -10,5 +10,5 @@ const container = document.getElementById('wrapper');
 const hiraganaTable = new Table(container as HTMLElement, 'hiragana', sets);
 hiraganaTable.render();
 
-// const katakanaTable = new Table(wrapper as HTMLElement, 'katakana', sets);
-// katakanaTable.render();
+const katakanaTable = new Table(container as HTMLElement, 'katakana', sets);
+katakanaTable.render();

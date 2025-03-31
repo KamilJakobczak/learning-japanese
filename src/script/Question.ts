@@ -1,4 +1,4 @@
-import { QuestionData } from './Game';
+import { QuestionData } from './Questions';
 import QuestionRenderer from './QuestionRenderer';
 import { shuffleArray } from './utils/shuffleArray';
 

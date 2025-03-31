@@ -1,10 +1,9 @@
-import { QuestionsData } from './Questions';
-import { QuestionData } from './Game';
+import { QuestionData } from './Questions';
 import Question from './Question';
 
 class GameRenderer {
 	$appContainer: HTMLElement;
-	$questionsData: QuestionsData;
+	$questionsData: QuestionData[];
 	$gameContainer: HTMLElement;
 	$questionCounter: HTMLElement | null;
 	$getScore: () => number;
@@ -12,7 +11,7 @@ class GameRenderer {
 	$getCurrentQuestion: () => number;
 	constructor(
 		container: HTMLElement,
-		questionsData: QuestionsData,
+		questionsData: QuestionData[],
 		getCurrentQuestion: () => number,
 		getScore: () => number,
 		onQuestionAnswered: (result: boolean) => void
@@ -28,7 +27,7 @@ class GameRenderer {
 	}
 
 	render() {
-		if (this.$getCurrentQuestion() >= this.$questionsData.questions.length) {
+		if (this.$getCurrentQuestion() >= this.$questionsData.length) {
 			this.displayResults();
 			return;
 		} else {
@@ -47,13 +46,13 @@ class GameRenderer {
 		return gameContainer;
 	}
 	renderQuestionCounter(): null | HTMLElement {
-		if (!this.$questionsData || this.$questionsData.questions.length === 0) {
+		if (!this.$questionsData || this.$questionsData.length === 0) {
 			console.error('No questions available.');
 		}
 		if (this.$questionCounter) {
 			this.$questionCounter.textContent = `Question ${
 				this.$getCurrentQuestion() + 1
-			} of ${this.$questionsData.questions.length}`;
+			} of ${this.$questionsData.length}`;
 		}
 
 		const questionCounter = document.createElement('h3');
@@ -61,18 +60,18 @@ class GameRenderer {
 		questionCounter.classList.add('game__questionCounter');
 		questionCounter.textContent = `Question ${
 			this.$getCurrentQuestion() + 1
-		} of ${this.$questionsData.questions.length}`;
+		} of ${this.$questionsData.length}`;
 		this.$gameContainer.appendChild(questionCounter);
 		return questionCounter;
 	}
 
 	createQuestion() {
 		const questionData: QuestionData = {
-			question: this.$questionsData.questions[this.$getCurrentQuestion()],
+			question: this.$questionsData[this.$getCurrentQuestion()].question,
 			correctAnswer:
-				this.$questionsData.correctAnswers[this.$getCurrentQuestion()],
+				this.$questionsData[this.$getCurrentQuestion()].correctAnswer,
 			incorrectAnswers:
-				this.$questionsData.incorrectAnswers[this.$getCurrentQuestion()],
+				this.$questionsData[this.$getCurrentQuestion()].incorrectAnswers,
 		};
 
 		const question = new Question(
@@ -95,13 +94,13 @@ class GameRenderer {
 		resultContainer.appendChild(result);
 		this.$gameContainer.appendChild(resultContainer);
 		result.innerHTML = `${(
-			(this.$getScore() / this.$questionsData.questions.length) *
+			(this.$getScore() / this.$questionsData.length) *
 			100
 		).toFixed(2)}%!`;
 		const resultText = document.createElement('p');
 		resultContainer.appendChild(resultText);
 		resultText.textContent = `You scored ${this.$getScore()} points out of ${
-			this.$questionsData.questions.length
+			this.$questionsData.length
 		} possible!`;
 	}
 }

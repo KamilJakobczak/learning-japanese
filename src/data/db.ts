@@ -1,4 +1,4 @@
-interface Character {
+export interface Character {
 	hiragana: string;
 	katakana: string;
 	romaji: string;
