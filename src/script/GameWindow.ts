@@ -56,7 +56,7 @@ class GameWindow {
 		const hiraganaGameTitle = document.createElement('h1');
 		hiraganaGameTitle.textContent = `${
 			this.$currentPlayer?.getName() || ''
-		} Hiragana Game`; // Update the game title to include the player's name
+		} Japanese Syllabary Game`; // Update the game title to include the player's name
 		hiraganaGame.appendChild(hiraganaGameTitle);
 		return hiraganaGame;
 	}

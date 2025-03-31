@@ -5,7 +5,7 @@ import { shuffleArray } from './utils/shuffleArray';
 export interface QuestionData {
 	question: string;
 	correctAnswer: string;
-	incorrectAnswers: string[];
+	distractors: string[];
 }
 
 class Questions {
@@ -25,145 +25,97 @@ class Questions {
 		this.$syllabary = syllabary;
 	}
 
-	createQuestions() {
-		this.createEasyQuestions();
+	createDistractors(joinedSets: Character[], romaji: string): string[] {
+		let distractors: string[] = Object.values(this.$sets)
+			.flatMap(set => set.map(character => character.romaji))
+			.filter(answer => answer !== romaji);
+
 		switch (this.$difficulty) {
 			case DIFFICULTY.EASY:
-				return this.createEasyQuestions();
+				break;
 			case DIFFICULTY.MEDIUM:
-				return this.createMediumQuestions();
+				distractors = joinedSets
+					.map(set => set.romaji)
+					.filter(answer => answer !== romaji);
 			case DIFFICULTY.HARD:
-				return this.createHardQuestions();
-			case DIFFICULTY.EXTREME:
-				return this.createExtremeQuestions();
-			default:
-				return;
+				distractors = distractors.filter(answer => {
+					if (romaji.length === 1) {
+						return answer.includes(romaji[0]);
+					} else if (romaji.length === 2) {
+						const firstChar = romaji[0];
+						const secondChar = romaji[1];
+						return (
+							answer.includes(firstChar) || answer.includes(secondChar)
+						);
+					} else if (romaji.length === 3) {
+						const firstChar = romaji[0];
+						const secondChar = romaji[1];
+						const thirdChar = romaji[2];
+						return (
+							answer.includes(firstChar) ||
+							answer.includes(secondChar) ||
+							answer.includes(thirdChar)
+						);
+					}
+				});
+			// case DIFFICULTY.EXTREME:
+			// 	return
 		}
+
+		distractors = shuffleArray(distractors).slice(0, 3);
+		return distractors;
 	}
-	createEasyQuestions(): QuestionData[] {
+
+	createQuestions(): QuestionData[] {
 		const filteredSets: Character[][] = this.$chapters.map(chapter => {
 			return this.$sets[chapter];
 		});
 		const joinedSets = filteredSets.flat();
-
 		const questions: QuestionData[] = [];
-		const possibleAnswers: string[] = joinedSets.map(set => set.romaji);
 
 		joinedSets.forEach(set => {
-			let incorrectAnswers: string[];
-			incorrectAnswers = possibleAnswers.filter(
-				answer => answer !== set.romaji
-			);
-			incorrectAnswers = shuffleArray(incorrectAnswers).slice(0, 3);
-
-			switch (this.$syllabary) {
-				case SYLLABARY.HIRAGANA:
-					questions.push({
-						question: set.hiragana,
-						correctAnswer: set.romaji,
-						incorrectAnswers: incorrectAnswers,
-					});
-					break;
-				case SYLLABARY.KATAKANA:
-					questions.push({
-						question: set.katakana,
-						correctAnswer: set.romaji,
-						incorrectAnswers: incorrectAnswers,
-					});
-					break;
-				case SYLLABARY.MIXED:
-					questions.push({
-						question: set.hiragana,
-						correctAnswer: set.romaji,
-						incorrectAnswers: incorrectAnswers,
-					});
-					questions.push({
-						question: set.katakana,
-						correctAnswer: set.romaji,
-						incorrectAnswers: incorrectAnswers,
-					});
-					break;
-				default:
-					break;
-			}
+			this.addQuestion(questions, set, joinedSets);
 		});
-		console.log(shuffleArray(questions));
-		return questions;
-		// console.log(questions);
+
+		return shuffleArray(questions);
 	}
-	// createEasyQuestions(): QuestionsData {
-	// 	const filteredSets = this.$chapters.map(chapter => {
-	// 		return this.$sets[chapter];
-	// 	});
+	addQuestion(
+		questions: QuestionData[],
+		set: Character,
+		joinedSets: Character[]
+	) {
+		const distractors = this.createDistractors(joinedSets, set.romaji);
 
-	// 	const joinedSets = filteredSets.flat();
-	// 	const randomSets = shuffleArray(joinedSets);
-
-	// 	const questions: string[] = [];
-	// 	randomSets.map(set => {
-	// 		switch (this.$syllabary) {
-	// 			case SYLLABARY.HIRAGANA:
-	// 				questions.push(set.hiragana);
-	// 			case SYLLABARY.KATAKANA:
-	// 				questions.push(set.katakana);
-	// 			case SYLLABARY.MIXED:
-	// 				questions.push(set.hiragana);
-	// 				questions.push(set.katakana);
-	// 			default:
-	// 				return set.romaji;
-	// 		}
-	// 	});
-
-	// 	const correctAnswers: string[] = randomSets.map(set => {
-	// 		return set.romaji;
-	// 	});
-
-	// 	const incorrectAnswers = (): string[][] => {
-	// 		const incorrectAnswers: string[][] = [];
-	// 		for (let i = 0; i < correctAnswers.length; i++) {
-	// 			const answers = correctAnswers.filter(
-	// 				(answer: string) => answer !== correctAnswers[i]
-	// 			);
-	// 			const random3Answers = shuffleArray(answers).slice(0, 3);
-
-	// 			incorrectAnswers.push(random3Answers);
-	// 		}
-
-	// 		return incorrectAnswers;
-	// 	};
-	// 	const questionsData: QuestionsData = {
-	// 		questions,
-	// 		correctAnswers,
-	// 		incorrectAnswers: incorrectAnswers(),
-	// 	};
-	// 	return questionsData;
-	// }
-	createMediumQuestions(): QuestionData[] {
-		return [
-			{
-				question: '',
-				correctAnswer: '',
-				incorrectAnswers: [''],
-			},
-		];
-	}
-	createHardQuestions(): QuestionData[] {
-		return [
-			{
-				question: '',
-				correctAnswer: '',
-				incorrectAnswers: [''],
-			},
-		];
-	}
-	createExtremeQuestions(): QuestionData[] {
-		return [
-			{
-				question: '',
-				correctAnswer: '',
-				incorrectAnswers: [''],
-			},
-		];
+		switch (this.$syllabary) {
+			case SYLLABARY.HIRAGANA:
+				questions.push({
+					question: set.hiragana,
+					correctAnswer: set.romaji,
+					distractors,
+				});
+				break;
+			case SYLLABARY.KATAKANA:
+				questions.push({
+					question: set.katakana,
+					correctAnswer: set.romaji,
+					distractors,
+				});
+				break;
+			case SYLLABARY.MIXED:
+				questions.push({
+					question: set.hiragana,
+					correctAnswer: set.romaji,
+					distractors,
+				});
+				questions.push({
+					question: set.katakana,
+					correctAnswer: set.romaji,
+					distractors,
+				});
+				break;
+			default:
+				break;
+		}
 	}
 }
 

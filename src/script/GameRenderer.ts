@@ -70,8 +70,8 @@ class GameRenderer {
 			question: this.$questionsData[this.$getCurrentQuestion()].question,
 			correctAnswer:
 				this.$questionsData[this.$getCurrentQuestion()].correctAnswer,
-			incorrectAnswers:
-				this.$questionsData[this.$getCurrentQuestion()].incorrectAnswers,
+			distractors:
+				this.$questionsData[this.$getCurrentQuestion()].distractors,
 		};
 
 		const question = new Question(

@@ -5,7 +5,7 @@ import { shuffleArray } from './utils/shuffleArray';
 class Question {
 	$container: HTMLElement;
 	$correctAnswer: string;
-	$incorrectAnswers: string[];
+	$distractors: string[];
 	$question: string;
 	$onQuestionAnswered: (result: boolean) => void;
 	constructor(
@@ -16,7 +16,7 @@ class Question {
 		this.$container = container;
 		this.$question = questionData.question;
 		this.$correctAnswer = questionData.correctAnswer;
-		this.$incorrectAnswers = questionData.incorrectAnswers;
+		this.$distractors = questionData.distractors;
 		this.$onQuestionAnswered = onQuestionAnswered;
 	}
 	render() {
@@ -29,7 +29,7 @@ class Question {
 		renderer.render();
 	}
 	generateShuffledAnswers() {
-		return shuffleArray([this.$correctAnswer, ...this.$incorrectAnswers]);
+		return shuffleArray([this.$correctAnswer, ...this.$distractors]);
 	}
 
 	validateAnswer(answer: string) {
