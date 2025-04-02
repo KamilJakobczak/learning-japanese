@@ -9,3 +9,9 @@ export enum SYLLABARY {
 	KATAKANA = 'katakana',
 	MIXED = 'mixed',
 }
+
+export enum GAMESTATE {
+	START = 'start',
+	// PLAYING = 'playing',
+	END = 'end',
+}

@@ -1,11 +1,17 @@
 import { Sets } from '../data/db';
-import { DIFFICULTY, SYLLABARY } from './enums/enums';
+import { DIFFICULTY, SYLLABARY, GAMESTATE } from './enums/enums';
 import GameRenderer from './GameRenderer';
 import Player from './Player';
 import Questions, { QuestionData } from './Questions';
 
 const INITIAL_SCORE = 0;
 const INITIAL_QUESTION = 0;
+
+export interface GameTime {
+	minutes: number;
+	seconds: number;
+	milliseconds: number;
+}
 
 class Game {
 	$gameRenderer: GameRenderer;
@@ -19,7 +25,7 @@ class Game {
 	$sets: Sets;
 	$questionsData: QuestionData[];
 	$currentQuestion: number;
-
+	$length: { start: number; end: number };
 	constructor(
 		player: Player,
 		difficulty: DIFFICULTY,
@@ -41,6 +47,7 @@ class Game {
 			chapters,
 			sets
 		).createQuestions();
+		this.$length = { start: 0, end: 0 };
 		this.$score = INITIAL_SCORE;
 		this.$currentQuestion = INITIAL_QUESTION;
 		this.$gameRenderer = new GameRenderer(
@@ -48,10 +55,15 @@ class Game {
 			this.$questionsData,
 			this.getCurrentQuestion.bind(this),
 			this.getScore.bind(this),
-			this.onQuestionAnswered.bind(this)
+			this.onQuestionAnswered.bind(this),
+			this.getGameTime.bind(this)
 		);
 	}
 
+	render() {
+		this.$gameRenderer.render();
+		this.setGameTime(GAMESTATE.START);
+	}
 	getScore(): number {
 		return this.$score;
 	}
@@ -61,8 +73,15 @@ class Game {
 	getCurrentQuestion(): number {
 		return this.$currentQuestion;
 	}
-	render() {
-		this.$gameRenderer.render();
+	setGameTime(gameState: GAMESTATE): void {
+		switch (gameState) {
+			case GAMESTATE.START:
+				this.$length.start = Date.now();
+				break;
+			case GAMESTATE.END:
+				this.$length.end = Date.now();
+				break;
+		}
 	}
 
 	incrementCurrentQuestion(): void {
@@ -80,6 +99,21 @@ class Game {
 			this.$difficulty
 		}-${this.$chapters.join('-')}-${Date.now()}`;
 	}
+	getGameTime(): GameTime {
+		if (this.$length.start === 0 || this.$length.end === 0) {
+			throw new Error('Game time not set');
+		}
+		const time = this.$length.end - this.$length.start;
+
+		const minutes = Math.floor(time / 1000 / 60);
+		const seconds = Math.floor((time / 1000) % 60);
+		const milliseconds = Math.floor((time % 1000) / 10);
+
+		console.log(
+			`It took you ${minutes} minutes, ${seconds} seconds, and ${milliseconds} milliseconds to finish the game.`
+		);
+		return { minutes, seconds, milliseconds };
+	}
 
 	isGameFinished(): boolean {
 		return this.$currentQuestion >= this.$questionsData.length;
@@ -92,6 +126,8 @@ class Game {
 		this.incrementCurrentQuestion();
 
 		if (this.isGameFinished()) {
+			this.setGameTime(GAMESTATE.END);
+			this.getGameTime();
 			this.$gameRenderer.displayResults();
 		} else {
 			this.$gameRenderer.renderNextQuestion();

@@ -1,5 +1,7 @@
 import { QuestionData } from './Questions';
 import Question from './Question';
+import { GameTime } from './Game';
+import { createParagraph } from './utils/createParagraph';
 
 class GameRenderer {
 	$appContainer: HTMLElement;
@@ -9,12 +11,15 @@ class GameRenderer {
 	$getScore: () => number;
 	$onQuestionAnswered: (result: boolean) => void;
 	$getCurrentQuestion: () => number;
+	$getGameTime: () => GameTime;
+
 	constructor(
 		container: HTMLElement,
 		questionsData: QuestionData[],
 		getCurrentQuestion: () => number,
 		getScore: () => number,
-		onQuestionAnswered: (result: boolean) => void
+		onQuestionAnswered: (result: boolean) => void,
+		getGameTime: () => GameTime
 	) {
 		this.$questionsData = questionsData;
 		this.$appContainer = container;
@@ -22,10 +27,11 @@ class GameRenderer {
 		this.$getCurrentQuestion = getCurrentQuestion;
 		this.$getScore = getScore;
 		this.$onQuestionAnswered = onQuestionAnswered;
+		this.$getGameTime = getGameTime;
 		this.$gameContainer = this.createGameContainer();
 		this.$questionCounter = this.renderQuestionCounter();
 	}
-
+	// Render the game or display results if all questions are answered
 	render() {
 		if (this.$getCurrentQuestion() >= this.$questionsData.length) {
 			this.displayResults();
@@ -36,15 +42,14 @@ class GameRenderer {
 			this.createQuestion();
 		}
 	}
-	// unmount() {
-	// 	this.$gameContainer.remove();
-	// }
+	// Create and append the main game container to the app container
 	createGameContainer() {
 		const gameContainer = document.createElement('div');
 		gameContainer.classList.add('gameContainer');
 		this.$appContainer.appendChild(gameContainer);
 		return gameContainer;
 	}
+	// Render the question counter to display the current question number
 	renderQuestionCounter(): null | HTMLElement {
 		if (!this.$questionsData || this.$questionsData.length === 0) {
 			console.error('No questions available.');
@@ -64,7 +69,7 @@ class GameRenderer {
 		this.$gameContainer.appendChild(questionCounter);
 		return questionCounter;
 	}
-
+	// Create and render a new question using the current question data
 	createQuestion() {
 		const questionData: QuestionData = {
 			question: this.$questionsData[this.$getCurrentQuestion()].question,
@@ -81,11 +86,25 @@ class GameRenderer {
 		);
 		question.render();
 	}
+
 	renderNextQuestion() {
+		// Render the next question by re-rendering the game
 		this.render();
 	}
+	// Calculate the average time spent per question
+	calculateTimeSpent(): number {
+		const questions = this.$questionsData.length;
+		const timeSpent = this.$getGameTime();
+		const totalTime =
+			timeSpent.minutes * 60 +
+			timeSpent.seconds +
+			timeSpent.milliseconds / 1000;
+		const timePerQuestion = totalTime / questions;
+		return timePerQuestion;
+	}
+	// Display the final results, including score and time statistics
 	displayResults() {
-		this.$gameContainer.innerHTML = '';
+		this.$gameContainer.replaceChildren();
 
 		const resultContainer = document.createElement('div');
 		resultContainer.classList.add('game__result');
@@ -93,15 +112,29 @@ class GameRenderer {
 		const result = document.createElement('h3');
 		resultContainer.appendChild(result);
 		this.$gameContainer.appendChild(resultContainer);
-		result.innerHTML = `${(
+		result.textContent = `${(
 			(this.$getScore() / this.$questionsData.length) *
 			100
 		).toFixed(2)}%!`;
-		const resultText = document.createElement('p');
-		resultContainer.appendChild(resultText);
-		resultText.textContent = `You scored ${this.$getScore()} points out of ${
-			this.$questionsData.length
-		} possible!`;
+
+		createParagraph(
+			`You scored ${this.$getScore()} points out of ${
+				this.$questionsData.length
+			} possible!`,
+			resultContainer
+		);
+
+		const gameTime = this.$getGameTime();
+		createParagraph(
+			`It took you ${gameTime.minutes} minutes, ${gameTime.seconds} seconds and ${gameTime.milliseconds} milliseconds to finish the game.`,
+			resultContainer
+		);
+
+		const timePerQuestion = this.calculateTimeSpent();
+		createParagraph(
+			`You spent ${timePerQuestion.toFixed(2)} seconds per question.`,
+			resultContainer
+		);
 	}
 }
 
