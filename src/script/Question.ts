@@ -7,7 +7,7 @@ class Question {
 	$correctAnswer: string;
 	$distractors: string[];
 	$question: string;
-	$onQuestionAnswered: (result: boolean) => void;
+	$onQuestionAnswered: (result: boolean, answer: string) => void;
 	constructor(
 		container: HTMLElement,
 		questionData: QuestionData,
@@ -35,10 +35,10 @@ class Question {
 	validateAnswer(answer: string) {
 		if (answer === this.$correctAnswer) {
 			console.log('GOOD ANSWER');
-			this.$onQuestionAnswered(true);
+			this.$onQuestionAnswered(true, answer);
 		} else {
 			console.log('WRONG ANSWER');
-			this.$onQuestionAnswered(false);
+			this.$onQuestionAnswered(false, answer);
 		}
 	}
 }

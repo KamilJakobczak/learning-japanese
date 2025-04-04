@@ -26,6 +26,8 @@ class Game {
 	$questionsData: QuestionData[];
 	$currentQuestion: number;
 	$length: { start: number; end: number };
+	$answeredCorrectly: string[];
+	$answeredWrong: string[];
 	constructor(
 		player: Player,
 		difficulty: DIFFICULTY,
@@ -58,6 +60,8 @@ class Game {
 			this.onQuestionAnswered.bind(this),
 			this.getGameTime.bind(this)
 		);
+		this.$answeredCorrectly = [];
+		this.$answeredWrong = [];
 	}
 
 	render() {
@@ -65,7 +69,7 @@ class Game {
 		this.setGameTime(GAMESTATE.START);
 	}
 	getScore(): number {
-		return this.$score;
+		return this.$answeredCorrectly.length;
 	}
 	getGameId(): string {
 		return this.$gameId;
@@ -119,15 +123,28 @@ class Game {
 		return this.$currentQuestion >= this.$questionsData.length;
 	}
 
-	onQuestionAnswered(result: boolean) {
+	onQuestionAnswered(result: boolean, answer: string) {
 		if (result) {
-			this.incrementScore();
+			// this.incrementScore();
+			// this.$player.setAnswers(true);
+			this.$answeredCorrectly.push(answer);
+		} else {
+			// this.$player.setAnswers(false);
+			this.$answeredWrong.push(answer);
 		}
 		this.incrementCurrentQuestion();
 
 		if (this.isGameFinished()) {
 			this.setGameTime(GAMESTATE.END);
-			this.getGameTime();
+
+			const gameResults = {
+				id: this.$gameId,
+				time: this.getGameTime(),
+				questionsCount: this.$questionsData.length,
+				correctAnswers: this.$answeredCorrectly,
+				wrongAnswers: this.$answeredWrong,
+			};
+			this.$player.addGameStatistics(gameResults);
 			this.$gameRenderer.displayResults();
 		} else {
 			this.$gameRenderer.renderNextQuestion();
