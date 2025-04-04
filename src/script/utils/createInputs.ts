@@ -9,6 +9,7 @@ interface CreateInputs {
 	required: boolean;
 	elements: string[];
 	labels?: string[];
+	selectAll: boolean;
 }
 export function createInputs(input: CreateInputs) {
 	const {
@@ -20,6 +21,7 @@ export function createInputs(input: CreateInputs) {
 		required,
 		elements,
 		labels,
+		selectAll,
 	} = input;
 
 	let fieldset: HTMLFieldSetElement;
@@ -57,6 +59,34 @@ export function createInputs(input: CreateInputs) {
 		wrapper.appendChild(label);
 		fieldset.appendChild(wrapper);
 	});
+
+	if (selectAll) {
+		const wrapper = document.createElement('div');
+		wrapper.classList.add(className + '_' + type);
+		wrapper.classList.add('selectAllWrapper');
+		const input = document.createElement('input');
+		input.type = 'checkbox';
+		input.id = 'selectAll';
+		input.name = 'selectAll';
+		input.value = 'selectAll';
+		input.required = false;
+		const label = document.createElement('label');
+		label.htmlFor = 'selectAll';
+		const textNode = document.createTextNode('Select All');
+		label.appendChild(input);
+		label.appendChild(textNode);
+		wrapper.appendChild(label);
+		fieldset.appendChild(wrapper);
+
+		wrapper.addEventListener('click', () => {
+			const checkboxes = fieldset.querySelectorAll('input[type="checkbox"]');
+			checkboxes.forEach((checkbox: HTMLInputElement) => {
+				if (checkbox !== input) {
+					checkbox.checked = input.checked;
+				}
+			});
+		});
+	}
 
 	return fieldset;
 }

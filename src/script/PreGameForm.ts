@@ -108,6 +108,7 @@ class PreGameForm {
 			name: 'username',
 			required: true,
 			elements: ['username'],
+			selectAll: false,
 		});
 	}
 	// Method to create and append the difficulty selection section
@@ -119,6 +120,7 @@ class PreGameForm {
 			name: 'difficulty',
 			required: true,
 			elements: this.$difficultyLevels,
+			selectAll: false,
 		});
 	}
 
@@ -130,6 +132,7 @@ class PreGameForm {
 			name: 'syllabary',
 			required: true,
 			elements: this.$syllabaryLevels,
+			selectAll: false,
 		});
 
 		syllabary.addEventListener('change', (event: Event) => {
@@ -176,9 +179,9 @@ class PreGameForm {
 						break;
 				}
 			});
-			labels.push(`${chapter} (${labelText.join(', ')})`);
+			labels.push(`(${labelText.join(', ')})`);
 		});
-
+		console.log(labels);
 		// Create and append the chapters
 		createInputs({
 			form: this.$form,
@@ -189,6 +192,7 @@ class PreGameForm {
 			required: false,
 			elements: chapters,
 			labels,
+			selectAll: true,
 		});
 	}
 

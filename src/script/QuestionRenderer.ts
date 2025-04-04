@@ -64,6 +64,7 @@ class QuestionRenderer {
 			name: 'answer',
 			required: true,
 			elements: this.$answers,
+			selectAll: false,
 		});
 	}
 
