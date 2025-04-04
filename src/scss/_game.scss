@@ -6,15 +6,37 @@
 			text-align: center;
 		}
 		&__result {
+			text-align: center;
+			width: 100%;
 			h3 {
 				font-size: 6rem;
 				text-align: center;
 				letter-spacing: 5px;
 			}
 			p {
-				margin-top: 20px;
+				margin-top: 25px;
 				font-size: 3rem;
 				text-align: center;
+			}
+			button {
+				width: 60%;
+				margin: 50px auto 0;
+				padding: 15px 0;
+				font-size: 2rem;
+				font-weight: 500;
+				letter-spacing: 4px;
+				text-transform: uppercase;
+				cursor: pointer;
+				border: none;
+				border-radius: 10px;
+				background: #040461;
+				color: white;
+				transition: 0.5s;
+				transform-origin: center;
+				&:hover {
+					// font-size: 2.5rem;
+					letter-spacing: 8px;
+				}
 			}
 		}
 	}

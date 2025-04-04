@@ -27,9 +27,17 @@ class GameWindow {
 		if (this.$game) {
 			this.renderGame(this.$game);
 		} else {
-			const container = this.createGameWindow();
-			this.$container = container;
-			this.renderPreGameForm(container);
+			if (!this.$container) {
+				// Create the game window if it doesn't exist
+				this.$container = this.createGameWindow();
+			} else {
+				// Rerender case
+				while (this.$container.children.length > 1) {
+					this.$container.lastChild?.remove();
+				}
+			}
+
+			this.renderPreGameForm(this.$container);
 		}
 	}
 	renderPreGameForm(container: HTMLElement) {
@@ -38,6 +46,7 @@ class GameWindow {
 			parent: container,
 			sets: this.$sets,
 			onPregameFormSubmit: this.onPregameFormSubmit.bind(this),
+			isPlayer: this.$currentPlayer ? true : false,
 		});
 		pregameForm.render();
 	}
@@ -65,7 +74,6 @@ class GameWindow {
 		if (gameTitle) {
 			gameTitle.textContent = `${this.$currentPlayer?.getName()}'s Hiragana Game`;
 		}
-
 		game.render();
 	}
 	onPregameFormSubmit(
@@ -74,18 +82,25 @@ class GameWindow {
 		syllabary: SYLLABARY,
 		chapters: string[]
 	) {
-		const player = new Player(username);
-		this.setCurrentPlayer(player);
+		if (!this.$currentPlayer) {
+			const player = new Player(username);
+			this.setCurrentPlayer(player);
+		}
 		const game = new Game(
-			player,
+			this.$currentPlayer,
 			difficulty,
 			syllabary,
 			chapters,
 			this.$container,
-			this.$sets
+			this.$sets,
+			this.onPlayAgain.bind(this)
 		);
 		this.setGame(game);
 		this.render();
+	}
+	onPlayAgain() {
+		this.$game = null; // Reset the game instance
+		this.render(); // Re-render the game window to show the pre-game form again
 	}
 }
 

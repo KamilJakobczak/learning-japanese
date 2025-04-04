@@ -35,7 +35,10 @@ class Player {
 	// }
 
 	addGameStatistics(gameResults: GameResults) {
-		console.log(gameResults);
+		if (gameResults.id.indexOf(this.$name) === -1) {
+			throw new Error('Game ID does not match player name');
+		}
+		console.log(this.$games.size);
 		this.$games.set(this.$games.size, gameResults);
 		console.log(this.$games);
 	}

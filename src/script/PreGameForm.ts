@@ -13,6 +13,7 @@ interface PreGameFormProps {
 		syllabary: SYLLABARY,
 		chapters: string[]
 	) => void;
+	isPlayer: boolean;
 }
 
 const CLASS_NAMES = {
@@ -37,8 +38,14 @@ class PreGameForm {
 		syllabary: SYLLABARY,
 		chapters: string[]
 	) => void;
+	$isPlayer: boolean;
 	$chaptersContainer: HTMLFieldSetElement | null;
-	constructor({ parent, sets, onPregameFormSubmit }: PreGameFormProps) {
+	constructor({
+		parent,
+		sets,
+		onPregameFormSubmit,
+		isPlayer,
+	}: PreGameFormProps) {
 		this.$difficultyLevels = [
 			DIFFICULTY.EASY,
 			DIFFICULTY.MEDIUM,
@@ -54,6 +61,7 @@ class PreGameForm {
 		this.$parent = parent;
 		this.$form = null;
 		this.$onPregameFormSubmit = onPregameFormSubmit;
+		this.$isPlayer = isPlayer;
 		this.$chaptersContainer = null;
 	}
 
@@ -76,7 +84,7 @@ class PreGameForm {
 		this.$parent.appendChild(form);
 		this.$form = form;
 		// Create and append the username input section
-		this.createUsernameInput(form);
+		this.$isPlayer ? null : this.createUsernameInput(form);
 
 		// Create and append the difficulty selection section
 		this.createDifficultySelection(form);

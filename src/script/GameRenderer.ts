@@ -12,14 +12,15 @@ class GameRenderer {
 	$onQuestionAnswered: (result: boolean) => void;
 	$getCurrentQuestion: () => number;
 	$getGameTime: () => GameTime;
-
+	$onPlayAgain: () => void;
 	constructor(
 		container: HTMLElement,
 		questionsData: QuestionData[],
 		getCurrentQuestion: () => number,
 		getScore: () => number,
 		onQuestionAnswered: (result: boolean) => void,
-		getGameTime: () => GameTime
+		getGameTime: () => GameTime,
+		onPlayAgain: () => void
 	) {
 		this.$questionsData = questionsData;
 		this.$appContainer = container;
@@ -28,6 +29,7 @@ class GameRenderer {
 		this.$getScore = getScore;
 		this.$onQuestionAnswered = onQuestionAnswered;
 		this.$getGameTime = getGameTime;
+		this.$onPlayAgain = onPlayAgain;
 		this.$gameContainer = this.createGameContainer();
 		this.$questionCounter = this.renderQuestionCounter();
 	}
@@ -37,7 +39,7 @@ class GameRenderer {
 			this.displayResults();
 			return;
 		} else {
-			this.$gameContainer.innerHTML = '';
+			this.$gameContainer.replaceChildren();
 			this.renderQuestionCounter();
 			this.createQuestion();
 		}
@@ -135,6 +137,14 @@ class GameRenderer {
 			`You spent ${timePerQuestion.toFixed(2)} seconds per question.`,
 			resultContainer
 		);
+
+		const restartButton = document.createElement('button');
+		restartButton.textContent = 'Play again!';
+		restartButton.classList.add('game__restartButton');
+		restartButton.addEventListener('click', () => {
+			this.$onPlayAgain();
+		});
+		resultContainer.appendChild(restartButton);
 	}
 }
 

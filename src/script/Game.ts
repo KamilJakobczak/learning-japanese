@@ -23,6 +23,7 @@ class Game {
 	$score: number;
 	$appContainer: HTMLElement;
 	$sets: Sets;
+	// $onPlayAgain: () => void;
 	$questionsData: QuestionData[];
 	$currentQuestion: number;
 	$length: { start: number; end: number };
@@ -34,7 +35,8 @@ class Game {
 		syllabary: SYLLABARY,
 		chapters: string[],
 		container: HTMLElement,
-		sets: Sets
+		sets: Sets,
+		onPlayAgain: () => void
 	) {
 		this.$player = player;
 		this.$difficulty = difficulty;
@@ -58,7 +60,8 @@ class Game {
 			this.getCurrentQuestion.bind(this),
 			this.getScore.bind(this),
 			this.onQuestionAnswered.bind(this),
-			this.getGameTime.bind(this)
+			this.getGameTime.bind(this),
+			onPlayAgain
 		);
 		this.$answeredCorrectly = [];
 		this.$answeredWrong = [];
