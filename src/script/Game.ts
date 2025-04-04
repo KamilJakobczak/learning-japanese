@@ -115,9 +115,6 @@ class Game {
 		const seconds = Math.floor((time / 1000) % 60);
 		const milliseconds = Math.floor((time % 1000) / 10);
 
-		console.log(
-			`It took you ${minutes} minutes, ${seconds} seconds, and ${milliseconds} milliseconds to finish the game.`
-		);
 		return { minutes, seconds, milliseconds };
 	}
 

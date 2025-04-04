@@ -2,6 +2,7 @@ import { QuestionData } from './Questions';
 import Question from './Question';
 import { GameTime } from './Game';
 import { createParagraph } from './utils/createParagraph';
+import Timer from './Timer';
 
 class GameRenderer {
 	$appContainer: HTMLElement;
@@ -51,6 +52,12 @@ class GameRenderer {
 		this.$appContainer.appendChild(gameContainer);
 		return gameContainer;
 	}
+	renderTimer() {
+		const timerWrapper = document.createElement('div');
+		timerWrapper.classList.add('game__timer');
+		const timer = new Timer();
+		timer.start();
+	}
 	// Render the question counter to display the current question number
 	renderQuestionCounter(): null | HTMLElement {
 		if (!this.$questionsData || this.$questionsData.length === 0) {
@@ -87,6 +94,7 @@ class GameRenderer {
 			this.$onQuestionAnswered
 		);
 		question.render();
+		this.renderTimer();
 	}
 
 	renderNextQuestion() {
