@@ -22,25 +22,31 @@ class Player {
 	getName() {
 		return this.$name;
 	}
-	// setAnswers(isCorrect: boolean) {
-	// 	if (isCorrect) {
-	// 		this.$answers.correct++;
-	// 	} else {
-	// 		this.$answers.wrong++;
-	// 	}
-	// 	this.calculateScore();
-	// 	console.log(
-	// 		`Correct: ${this.$answers.correct}, Wrong: ${this.$answers.wrong}`
-	// 	);
-	// }
+	saveToLocalStorage() {
+		const playerData = {
+			name: this.$name,
+			games: Array.from(this.$games.entries()),
+		};
+		localStorage.setItem('playerData', JSON.stringify(playerData));
+	}
+	static loadFromLocalStorage(): Player | null {
+		const playerData = localStorage.getItem('playerData');
+		if (!playerData) {
+			return null;
+		}
+
+		const { name, games } = JSON.parse(playerData);
+		const player = new Player(name);
+		player.$games = new Map<number, GameResults>(games);
+		return player;
+	}
 
 	addGameStatistics(gameResults: GameResults) {
 		if (gameResults.id.indexOf(this.$name) === -1) {
 			throw new Error('Game ID does not match player name');
 		}
-		console.log(this.$games.size);
 		this.$games.set(this.$games.size, gameResults);
-		console.log(this.$games);
+		this.saveToLocalStorage();
 	}
 	calculateScore() {
 		this.$score = this.$answers.correct;

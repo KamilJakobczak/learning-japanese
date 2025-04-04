@@ -23,7 +23,6 @@ class Game {
 	$score: number;
 	$appContainer: HTMLElement;
 	$sets: Sets;
-	// $onPlayAgain: () => void;
 	$questionsData: QuestionData[];
 	$currentQuestion: number;
 	$length: { start: number; end: number };
@@ -102,9 +101,9 @@ class Game {
 		if (!this.$player) {
 			throw new Error('Player not found');
 		}
-		return `${this.$player.getName()}-${
-			this.$difficulty
-		}-${this.$chapters.join('-')}-${Date.now()}`;
+		return `${this.$player.getName()}-${this.$difficulty}-${this.$chapters.at(
+			0
+		)}-${this.$chapters.length}-${Date.now()}`;
 	}
 	getGameTime(): GameTime {
 		if (this.$length.start === 0 || this.$length.end === 0) {

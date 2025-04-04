@@ -181,7 +181,7 @@ class PreGameForm {
 			});
 			labels.push(`(${labelText.join(', ')})`);
 		});
-		console.log(labels);
+
 		// Create and append the chapters
 		createInputs({
 			form: this.$form,

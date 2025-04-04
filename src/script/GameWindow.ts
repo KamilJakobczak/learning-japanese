@@ -13,11 +13,12 @@ class GameWindow {
 	constructor(sets: Sets) {
 		this.$container = null;
 		this.$sets = sets;
-		this.$currentPlayer = null;
+		this.$currentPlayer = Player.loadFromLocalStorage(); // Load the player from local storage
 		this.$game = null;
 	}
 	setCurrentPlayer(player: Player) {
 		this.$currentPlayer = player;
+		player.saveToLocalStorage(); // Save the player to local storage
 	}
 	setGame(game: Game) {
 		this.$game = game;
@@ -36,12 +37,12 @@ class GameWindow {
 					this.$container.lastChild?.remove();
 				}
 			}
-
 			this.renderPreGameForm(this.$container);
 		}
 	}
 	renderPreGameForm(container: HTMLElement) {
 		// Create an instance of the PreGameForm class and render the form
+		console.log(this.$currentPlayer);
 		const pregameForm = new PreGameForm({
 			parent: container,
 			sets: this.$sets,
@@ -65,14 +66,14 @@ class GameWindow {
 		const hiraganaGameTitle = document.createElement('h1');
 		hiraganaGameTitle.textContent = `${
 			this.$currentPlayer?.getName() || ''
-		} Learning Japanese`; // Update the game title to include the player's name
+		}'s Learning Japanese`; // Update the game title to include the player's name
 		hiraganaGame.appendChild(hiraganaGameTitle);
 		return hiraganaGame;
 	}
 	renderGame(game: Game) {
 		const gameTitle = document.querySelector('h1');
 		if (gameTitle) {
-			gameTitle.textContent = `${this.$currentPlayer?.getName()}'s Hiragana Game`;
+			gameTitle.textContent = `${this.$currentPlayer?.getName()}'s Learning japanese`;
 		}
 		game.render();
 	}
