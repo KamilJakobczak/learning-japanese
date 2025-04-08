@@ -37,6 +37,9 @@ class Questions {
 				distractors = joinedSets
 					.map(set => set.romaji)
 					.filter(answer => answer !== romaji);
+				console.log(distractors);
+				break;
+
 			case DIFFICULTY.HARD:
 				distractors = distractors.filter(answer => {
 					if (romaji.length === 1) {
