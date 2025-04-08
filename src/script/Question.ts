@@ -1,4 +1,4 @@
-import { QuestionData } from './Questions';
+import { QuestionData } from './interfaces/interface';
 import QuestionRenderer from './QuestionRenderer';
 import { shuffleArray } from './utils/shuffleArray';
 

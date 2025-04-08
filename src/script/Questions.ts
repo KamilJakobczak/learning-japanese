@@ -1,12 +1,7 @@
 import { Character, Sets } from '../data/db';
 import { DIFFICULTY, SYLLABARY } from './enums/enums';
+import { QuestionData } from './interfaces/interface';
 import { shuffleArray } from './utils/shuffleArray';
-
-export interface QuestionData {
-	question: string;
-	correctAnswer: string;
-	distractors: string[];
-}
 
 class Questions {
 	$chapters: string[];

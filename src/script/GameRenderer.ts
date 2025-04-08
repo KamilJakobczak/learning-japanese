@@ -1,8 +1,8 @@
-import { QuestionData } from './Questions';
 import Question from './Question';
-import { GameTime } from './Game';
+
 import { createParagraph } from './utils/createParagraph';
 import Timer from './Timer';
+import { GameTime, QuestionData } from './interfaces/interface';
 
 class GameRenderer {
 	$appContainer: HTMLElement;

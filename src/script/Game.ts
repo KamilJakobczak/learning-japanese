@@ -1,17 +1,12 @@
 import { Sets } from '../data/db';
 import { DIFFICULTY, SYLLABARY, GAMESTATE } from './enums/enums';
 import GameRenderer from './GameRenderer';
+import { GameTime, QuestionData } from './interfaces/interface';
 import Player from './Player';
-import Questions, { QuestionData } from './Questions';
+import Questions from './Questions';
 
 const INITIAL_SCORE = 0;
 const INITIAL_QUESTION = 0;
-
-export interface GameTime {
-	minutes: number;
-	seconds: number;
-	milliseconds: number;
-}
 
 class Game {
 	$gameRenderer: GameRenderer;
@@ -101,9 +96,9 @@ class Game {
 		if (!this.$player) {
 			throw new Error('Player not found');
 		}
-		return `${this.$player.getName()}-${this.$difficulty}-${this.$chapters.at(
-			0
-		)}-${this.$chapters.length}-${Date.now()}`;
+		return `${this.$player.getName()}-${this.$difficulty}-${
+			this.$syllabary
+		}-${this.$chapters.at(0)}-${this.$chapters.length}-${Date.now()}`;
 	}
 	getGameTime(): GameTime {
 		if (this.$length.start === 0 || this.$length.end === 0) {
@@ -124,11 +119,8 @@ class Game {
 
 	onQuestionAnswered(result: boolean, answer: string) {
 		if (result) {
-			// this.incrementScore();
-			// this.$player.setAnswers(true);
 			this.$answeredCorrectly.push(answer);
 		} else {
-			// this.$player.setAnswers(false);
 			this.$answeredWrong.push(answer);
 		}
 		this.incrementCurrentQuestion();

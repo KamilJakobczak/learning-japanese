@@ -42,7 +42,7 @@ class GameWindow {
 	}
 	renderPreGameForm(container: HTMLElement) {
 		// Create an instance of the PreGameForm class and render the form
-		console.log(this.$currentPlayer);
+
 		const pregameForm = new PreGameForm({
 			parent: container,
 			sets: this.$sets,

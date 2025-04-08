@@ -1,5 +1,4 @@
 import { createButton } from './utils/createButton';
-import { createFormFieldset } from './utils/createFormFieldset';
 import { createInputs } from './utils/createInputs';
 
 const CLASS_NAMES = {

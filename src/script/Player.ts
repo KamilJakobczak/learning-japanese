@@ -1,24 +1,38 @@
-import { GameTime } from './Game';
-
-interface GameResults {
-	id: string;
-	time: GameTime;
-	questionsCount: number;
-	correctAnswers: string[];
-	wrongAnswers: string[];
-}
+import { GameResults } from './interfaces/interface';
+import PlayerStats from './PlayerStats';
 
 class Player {
 	$name: string;
 	$answers: { correct: number; wrong: number } = { correct: 0, wrong: 0 };
 	$score: number = 0;
 	$games: Map<number, GameResults>;
+	$playerStats: PlayerStats | null = null;
 	constructor(name: string) {
 		this.$name = name;
 		this.$answers = { correct: 0, wrong: 0 };
 		this.$score = this.calculateScore();
 		this.$games = new Map<number, GameResults>();
+		this.$playerStats = null;
 	}
+
+	static loadFromLocalStorage(): Player | null {
+		const playerData = localStorage.getItem('playerData');
+		if (!playerData) {
+			return null;
+		}
+
+		const { name, games } = JSON.parse(playerData);
+
+		const player = new Player(name);
+
+		const gamesMap = new Map<number, GameResults>(games);
+		player.$games = gamesMap;
+		const playerStats = new PlayerStats(gamesMap, name);
+		player.$playerStats = playerStats;
+		playerStats.getStats();
+		return player;
+	}
+
 	getName() {
 		return this.$name;
 	}
@@ -28,17 +42,6 @@ class Player {
 			games: Array.from(this.$games.entries()),
 		};
 		localStorage.setItem('playerData', JSON.stringify(playerData));
-	}
-	static loadFromLocalStorage(): Player | null {
-		const playerData = localStorage.getItem('playerData');
-		if (!playerData) {
-			return null;
-		}
-
-		const { name, games } = JSON.parse(playerData);
-		const player = new Player(name);
-		player.$games = new Map<number, GameResults>(games);
-		return player;
 	}
 
 	addGameStatistics(gameResults: GameResults) {
