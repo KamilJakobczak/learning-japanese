@@ -55,9 +55,35 @@ class PlayerStats {
 			perQuestion: timeToString(timePerQuestion),
 		};
 	}
+	getAnswerStats(): { correctAnswers: number; wrongAnswers: number } {
+		const correctAnswers = Array.from(this.$games.values()).reduce(
+			(acc, entry) => {
+				acc += entry.correctAnswers.length;
+
+				return acc;
+			},
+			0
+		);
+
+		const wrongAnswers = Array.from(this.$games.values()).reduce(
+			(acc, entry) => {
+				acc += entry.wrongAnswers.length;
+				return acc;
+			},
+			0
+		);
+
+		return {
+			correctAnswers,
+			wrongAnswers,
+		};
+	}
+
 	getStats(): { games: number } {
 		const stats = {
 			games: this.$games.size,
+			correctAnswers: this.getAnswerStats().correctAnswers,
+			wrongAnswers: this.getAnswerStats().wrongAnswers,
 			timeSpent: this.getTotalTime(),
 			averageTime: this.getAverageTime(),
 		};
