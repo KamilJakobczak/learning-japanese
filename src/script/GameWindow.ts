@@ -3,6 +3,7 @@ import { Sets } from '../data/db'; // Import the Sets type from the database mod
 import Game from './Game';
 import Player from './Player';
 import { DIFFICULTY, SYLLABARY } from './enums/enums';
+import StatsRenderer from './StatsRenderer';
 
 class GameWindow {
 	$sets: Sets;
@@ -38,18 +39,8 @@ class GameWindow {
 				}
 			}
 			this.renderPreGameForm(this.$container);
+			this.renderPlayerStats(); // Render player stats if available
 		}
-	}
-	renderPreGameForm(container: HTMLElement) {
-		// Create an instance of the PreGameForm class and render the form
-
-		const pregameForm = new PreGameForm({
-			parent: container,
-			sets: this.$sets,
-			onPregameFormSubmit: this.onPregameFormSubmit.bind(this),
-			isPlayer: this.$currentPlayer ? true : false,
-		});
-		pregameForm.render();
 	}
 	createGameWindow() {
 		// Create and append the main wrapper div
@@ -70,12 +61,34 @@ class GameWindow {
 		hiraganaGame.appendChild(hiraganaGameTitle);
 		return hiraganaGame;
 	}
+	renderPreGameForm(container: HTMLElement) {
+		// Create an instance of the PreGameForm class and render the form
+
+		const pregameForm = new PreGameForm({
+			parent: container,
+			sets: this.$sets,
+			onPregameFormSubmit: this.onPregameFormSubmit.bind(this),
+			isPlayer: this.$currentPlayer ? true : false,
+		});
+		pregameForm.render();
+	}
+
 	renderGame(game: Game) {
 		const gameTitle = document.querySelector('h1');
 		if (gameTitle) {
 			gameTitle.textContent = `${this.$currentPlayer?.getName()}'s Learning japanese`;
 		}
 		game.render();
+	}
+	renderPlayerStats() {
+		const playerStats = this.$currentPlayer.$playerStats;
+
+		const statsRenderer = new StatsRenderer(
+			this.$currentPlayer.$name,
+			this.$container,
+			playerStats.getStats()
+		);
+		statsRenderer.render();
 	}
 	onPregameFormSubmit(
 		username: string,

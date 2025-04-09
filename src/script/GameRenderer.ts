@@ -81,6 +81,7 @@ class GameRenderer {
 	// Create and render a new question using the current question data
 	createQuestion() {
 		const questionData: QuestionData = {
+			syllabary: this.$questionsData[this.$getCurrentQuestion()].syllabary,
 			question: this.$questionsData[this.$getCurrentQuestion()].question,
 			correctAnswer:
 				this.$questionsData[this.$getCurrentQuestion()].correctAnswer,

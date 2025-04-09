@@ -1,6 +1,13 @@
-import { GameResults } from './interfaces/interface';
+import { characters } from '../data/db';
+import { GameResults, Stats } from './interfaces/interface';
+
 import convertMs from './utils/convertMs';
 import { timeToString } from './utils/timeToString';
+
+interface CharacterStats {
+	correctAnswers: { hiragana: number; katakana: number };
+	wrongAnswers: { hiragana: number; katakana: number };
+}
 
 class PlayerStats {
 	$playerName: string;
@@ -9,6 +16,7 @@ class PlayerStats {
 		this.$playerName = playerName;
 		this.$games = games;
 	}
+
 	getTotalTime(): { minutes: number; seconds: number; milliseconds: number } {
 		const totalTime = Array.from(this.$games.values()).reduce(
 			(acc, entry) => {
@@ -32,6 +40,7 @@ class PlayerStats {
 			},
 			{ minutes: 0, seconds: 0, milliseconds: 0 }
 		);
+
 		return totalTime;
 	}
 	getAverageTime(): {
@@ -55,11 +64,12 @@ class PlayerStats {
 			perQuestion: timeToString(timePerQuestion),
 		};
 	}
-	getAnswerStats(): { correctAnswers: number; wrongAnswers: number } {
+	getAnswersStats(): { correctAnswers: number; wrongAnswers: number } {
 		const correctAnswers = Array.from(this.$games.values()).reduce(
 			(acc, entry) => {
-				acc += entry.correctAnswers.length;
-
+				acc +=
+					entry.correctAnswers.hiragana.length +
+					entry.correctAnswers.katakana.length;
 				return acc;
 			},
 			0
@@ -67,7 +77,9 @@ class PlayerStats {
 
 		const wrongAnswers = Array.from(this.$games.values()).reduce(
 			(acc, entry) => {
-				acc += entry.wrongAnswers.length;
+				acc +=
+					entry.wrongAnswers.hiragana.length +
+					entry.wrongAnswers.katakana.length;
 				return acc;
 			},
 			0
@@ -78,14 +90,75 @@ class PlayerStats {
 			wrongAnswers,
 		};
 	}
+	getSpecificCharacterStats(index: string): CharacterStats {
+		const character = characters[index];
 
-	getStats(): { games: number } {
+		const correctHiraganaAnswers = Array.from(this.$games.values()).reduce(
+			(acc, entry) => {
+				const x = entry.correctAnswers.hiragana.filter(
+					answer => answer === character.romaji
+				);
+				return acc + x.length;
+			},
+			0
+		);
+		const correctKatakanaAnswers = Array.from(this.$games.values()).reduce(
+			(acc, entry) => {
+				const x = entry.correctAnswers.katakana.filter(
+					answer => answer === character.romaji
+				);
+				return acc + x.length;
+			},
+			0
+		);
+		const wrongHiraganaAnswers = Array.from(this.$games.values()).reduce(
+			(acc, entry) => {
+				const x = entry.wrongAnswers.hiragana.filter(
+					answer => answer === character.romaji
+				);
+				return acc + x.length;
+			},
+			0
+		);
+		const wrongKatakanaAnswers = Array.from(this.$games.values()).reduce(
+			(acc, entry) => {
+				const x = entry.wrongAnswers.katakana.filter(
+					answer => answer === character.romaji
+				);
+				return acc + x.length;
+			},
+			0
+		);
+
+		return {
+			correctAnswers: {
+				hiragana: correctHiraganaAnswers,
+				katakana: correctKatakanaAnswers,
+			},
+			wrongAnswers: {
+				hiragana: wrongHiraganaAnswers,
+				katakana: wrongKatakanaAnswers,
+			},
+		};
+	}
+
+	getStats(): Stats {
+		const specificCharactersStats = Object.keys(characters).reduce(
+			(acc, key) => {
+				const romaji = characters[key].romaji;
+				acc[romaji] = this.getSpecificCharacterStats(key);
+				return acc;
+			},
+			{} as Record<string, CharacterStats>
+		);
+
 		const stats = {
 			games: this.$games.size,
-			correctAnswers: this.getAnswerStats().correctAnswers,
-			wrongAnswers: this.getAnswerStats().wrongAnswers,
+			correctAnswers: this.getAnswersStats().correctAnswers,
+			wrongAnswers: this.getAnswersStats().wrongAnswers,
 			timeSpent: this.getTotalTime(),
 			averageTime: this.getAverageTime(),
+			specificCharactersStats,
 		};
 
 		console.log(stats);

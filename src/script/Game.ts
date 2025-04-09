@@ -21,8 +21,14 @@ class Game {
 	$questionsData: QuestionData[];
 	$currentQuestion: number;
 	$length: { start: number; end: number };
-	$answeredCorrectly: string[];
-	$answeredWrong: string[];
+	$answeredCorrectly: {
+		hiragana: string[];
+		katakana: string[];
+	};
+	$answeredWrong: {
+		hiragana: string[];
+		katakana: string[];
+	};
 	constructor(
 		player: Player,
 		difficulty: DIFFICULTY,
@@ -57,8 +63,14 @@ class Game {
 			this.getGameTime.bind(this),
 			onPlayAgain
 		);
-		this.$answeredCorrectly = [];
-		this.$answeredWrong = [];
+		this.$answeredCorrectly = {
+			hiragana: [],
+			katakana: [],
+		};
+		this.$answeredWrong = {
+			hiragana: [],
+			katakana: [],
+		};
 	}
 
 	render() {
@@ -66,7 +78,10 @@ class Game {
 		this.setGameTime(GAMESTATE.START);
 	}
 	getScore(): number {
-		return this.$answeredCorrectly.length;
+		return (
+			this.$answeredCorrectly.hiragana.length +
+			this.$answeredCorrectly.katakana.length
+		);
 	}
 	getGameId(): string {
 		return this.$gameId;
@@ -88,9 +103,9 @@ class Game {
 	incrementCurrentQuestion(): void {
 		this.$currentQuestion++;
 	}
-	incrementScore(): void {
-		this.$score++;
-	}
+	// incrementScore(): void {
+	// 	this.$score++;
+	// }
 
 	createGameId(): string {
 		if (!this.$player) {
@@ -119,9 +134,27 @@ class Game {
 
 	onQuestionAnswered(result: boolean, answer: string) {
 		if (result) {
-			this.$answeredCorrectly.push(answer);
+			switch (this.$questionsData[this.$currentQuestion].syllabary) {
+				case SYLLABARY.HIRAGANA:
+					this.$answeredCorrectly.hiragana.push(answer);
+					break;
+				case SYLLABARY.KATAKANA:
+					this.$answeredCorrectly.katakana.push(answer);
+					break;
+				default:
+					break;
+			}
 		} else {
-			this.$answeredWrong.push(answer);
+			switch (this.$questionsData[this.$currentQuestion].syllabary) {
+				case SYLLABARY.HIRAGANA:
+					this.$answeredWrong.hiragana.push(answer);
+					break;
+				case SYLLABARY.KATAKANA:
+					this.$answeredWrong.katakana.push(answer);
+					break;
+				default:
+					break;
+			}
 		}
 		this.incrementCurrentQuestion();
 
@@ -132,8 +165,14 @@ class Game {
 				id: this.$gameId,
 				time: this.getGameTime(),
 				questionsCount: this.$questionsData.length,
-				correctAnswers: this.$answeredCorrectly,
-				wrongAnswers: this.$answeredWrong,
+				correctAnswers: {
+					hiragana: this.$answeredCorrectly.hiragana,
+					katakana: this.$answeredCorrectly.katakana,
+				},
+				wrongAnswers: {
+					hiragana: this.$answeredWrong.hiragana,
+					katakana: this.$answeredWrong.katakana,
+				},
 			};
 			this.$player.addGameStatistics(gameResults);
 			this.$gameRenderer.displayResults();

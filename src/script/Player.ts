@@ -29,7 +29,7 @@ class Player {
 		player.$games = gamesMap;
 		const playerStats = new PlayerStats(gamesMap, name);
 		player.$playerStats = playerStats;
-		playerStats.getStats();
+
 		return player;
 	}
 

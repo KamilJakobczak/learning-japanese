@@ -87,6 +87,7 @@ class Questions {
 		switch (this.$syllabary) {
 			case SYLLABARY.HIRAGANA:
 				questions.push({
+					syllabary: SYLLABARY.HIRAGANA,
 					question: set.hiragana,
 					correctAnswer: set.romaji,
 					distractors,
@@ -94,6 +95,7 @@ class Questions {
 				break;
 			case SYLLABARY.KATAKANA:
 				questions.push({
+					syllabary: SYLLABARY.KATAKANA,
 					question: set.katakana,
 					correctAnswer: set.romaji,
 					distractors,
@@ -101,11 +103,13 @@ class Questions {
 				break;
 			case SYLLABARY.MIXED:
 				questions.push({
+					syllabary: SYLLABARY.HIRAGANA,
 					question: set.hiragana,
 					correctAnswer: set.romaji,
 					distractors,
 				});
 				questions.push({
+					syllabary: SYLLABARY.KATAKANA,
 					question: set.katakana,
 					correctAnswer: set.romaji,
 					distractors,
