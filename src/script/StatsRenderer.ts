@@ -2,7 +2,7 @@ import { Stats } from './interfaces/interface';
 import { createContainer } from './utils/createContainer';
 import { createParagraph } from './utils/createParagraph';
 
-const CLASS_NAMES = {
+const STATS_CLASS_NAMES = {
 	PLAYER_STATS: 'playerStats',
 	PLAYER_STATS_GENERAL: 'playerStats__general',
 	PLAYER_STATS_AVERAGE: 'playerStats__average',
@@ -13,33 +13,41 @@ class StatsRenderer {
 	$name: string;
 	$stats: Stats;
 	$container: HTMLElement;
+	$wrapper: HTMLDivElement | null;
 	constructor(name: string, container: HTMLElement, stats: Stats) {
 		this.$name = name;
 		this.$stats = stats;
 		this.$container = container;
+		this.$wrapper = null;
 	}
 
 	render() {
 		this.createStatsElements();
 	}
+	unmount() {
+		this.$wrapper && this.$wrapper.remove();
+	}
+
 	createStatsElements() {
 		const statsWrapper = createContainer(
-			CLASS_NAMES.PLAYER_STATS,
+			STATS_CLASS_NAMES.PLAYER_STATS,
 			this.$container,
 			'h2',
 			`${this.$name}'s stats`
 		);
+		this.$wrapper = statsWrapper;
 		this.createGeneralStats(statsWrapper);
 		this.createAverageStats(statsWrapper);
 		this.createSpecificStats(statsWrapper);
 	}
 	createGeneralStats(wrapper: HTMLDivElement) {
 		const generalStatsContainer = createContainer(
-			CLASS_NAMES.PLAYER_STATS_GENERAL,
+			STATS_CLASS_NAMES.PLAYER_STATS_GENERAL,
 			wrapper,
 			'h3',
 			`General`
 		);
+
 		const gamesPlayedPar = createParagraph(
 			`Games played: ${this.$stats.games}`,
 			generalStatsContainer
@@ -73,7 +81,7 @@ class StatsRenderer {
 	}
 	createAverageStats(wrapper: HTMLDivElement) {
 		const averageStatsContainer = createContainer(
-			CLASS_NAMES.PLAYER_STATS_AVERAGE,
+			STATS_CLASS_NAMES.PLAYER_STATS_AVERAGE,
 			wrapper,
 			'h3',
 			`Average`
@@ -99,7 +107,7 @@ class StatsRenderer {
 	}
 	createSpecificStats(wrapper: HTMLDivElement) {
 		const specificStatsContainer = createContainer(
-			CLASS_NAMES.PLAYER_STATS_SPECIFIC,
+			STATS_CLASS_NAMES.PLAYER_STATS_SPECIFIC,
 			wrapper,
 			'h3',
 			`Specific`
