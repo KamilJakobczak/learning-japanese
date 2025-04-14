@@ -1,4 +1,4 @@
-import { SYLLABARY } from '../enums/enums';
+import { Syllabary } from '../enums/enums';
 
 export interface GameTime {
 	minutes: number;
@@ -21,17 +21,23 @@ export interface GameResults {
 }
 
 export interface QuestionData {
-	syllabary: SYLLABARY;
+	syllabary: Syllabary;
 	question: string;
 	correctAnswer: string;
 	distractors: string[];
 }
 
-export interface Stats {
+interface GeneralStats {
 	games: number;
 	correctAnswers: number;
 	wrongAnswers: number;
+	accuracy: string;
 	timeSpent: { minutes: number; seconds: number; milliseconds: number };
 	averageTime: { perGame: string; perQuestion: string };
+}
+export interface Stats {
+	general: GeneralStats;
+	japaneseToRomaji?: GeneralStats;
+	romajiToJapanese?: GeneralStats;
 	specificCharactersStats: {};
 }

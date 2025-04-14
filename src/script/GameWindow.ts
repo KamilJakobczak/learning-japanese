@@ -2,7 +2,12 @@ import PreGameForm from './PreGameForm';
 import { Sets } from '../data/db'; // Import the Sets type from the database module
 import Game from './Game';
 import Player from './Player';
-import { DIFFICULTY, SYLLABARY } from './enums/enums';
+import {
+	AnswersDirection,
+	Difficulty,
+	QuestionType,
+	Syllabary,
+} from './enums/enums';
 import StatsRenderer from './StatsRenderer';
 
 class GameWindow {
@@ -92,8 +97,10 @@ class GameWindow {
 	}
 	onPregameFormSubmit(
 		username: string,
-		difficulty: DIFFICULTY,
-		syllabary: SYLLABARY,
+		questionsType: QuestionType,
+		answersDirection: AnswersDirection,
+		difficulty: Difficulty,
+		syllabary: Syllabary,
 		chapters: string[]
 	) {
 		if (!this.$currentPlayer) {

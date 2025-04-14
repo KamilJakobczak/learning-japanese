@@ -1,16 +1,16 @@
 import { Character, Sets } from '../data/db';
-import { DIFFICULTY, SYLLABARY } from './enums/enums';
+import { Difficulty, Syllabary } from './enums/enums';
 import { QuestionData } from './interfaces/interface';
 import { shuffleArray } from './utils/shuffleArray';
 
 class Questions {
 	$chapters: string[];
-	$difficulty: DIFFICULTY;
+	$difficulty: Difficulty;
 	$sets: Sets;
-	$syllabary: SYLLABARY;
+	$syllabary: Syllabary;
 	constructor(
-		difficulty: DIFFICULTY,
-		syllabary: SYLLABARY,
+		difficulty: Difficulty,
+		syllabary: Syllabary,
 		chapters: string[],
 		sets: Sets
 	) {
@@ -26,16 +26,16 @@ class Questions {
 			.filter(answer => answer !== romaji);
 
 		switch (this.$difficulty) {
-			case DIFFICULTY.EASY:
+			case Difficulty.EASY:
 				break;
-			case DIFFICULTY.MEDIUM:
+			case Difficulty.MEDIUM:
 				distractors = joinedSets
 					.map(set => set.romaji)
 					.filter(answer => answer !== romaji);
 				console.log(distractors);
 				break;
 
-			case DIFFICULTY.HARD:
+			case Difficulty.HARD:
 				distractors = distractors.filter(answer => {
 					if (romaji.length === 1) {
 						return answer.includes(romaji[0]);
@@ -56,7 +56,7 @@ class Questions {
 						);
 					}
 				});
-			// case DIFFICULTY.EXTREME:
+			// case Difficulty.EXTREME:
 			// 	return
 		}
 
@@ -85,31 +85,31 @@ class Questions {
 		const distractors = this.createDistractors(joinedSets, set.romaji);
 
 		switch (this.$syllabary) {
-			case SYLLABARY.HIRAGANA:
+			case Syllabary.HIRAGANA:
 				questions.push({
-					syllabary: SYLLABARY.HIRAGANA,
+					syllabary: Syllabary.HIRAGANA,
 					question: set.hiragana,
 					correctAnswer: set.romaji,
 					distractors,
 				});
 				break;
-			case SYLLABARY.KATAKANA:
+			case Syllabary.KATAKANA:
 				questions.push({
-					syllabary: SYLLABARY.KATAKANA,
+					syllabary: Syllabary.KATAKANA,
 					question: set.katakana,
 					correctAnswer: set.romaji,
 					distractors,
 				});
 				break;
-			case SYLLABARY.MIXED:
+			case Syllabary.MIXED:
 				questions.push({
-					syllabary: SYLLABARY.HIRAGANA,
+					syllabary: Syllabary.HIRAGANA,
 					question: set.hiragana,
 					correctAnswer: set.romaji,
 					distractors,
 				});
 				questions.push({
-					syllabary: SYLLABARY.KATAKANA,
+					syllabary: Syllabary.KATAKANA,
 					question: set.katakana,
 					correctAnswer: set.romaji,
 					distractors,

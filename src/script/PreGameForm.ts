@@ -1,7 +1,12 @@
 import { Sets } from '../data/db';
 import { createInputs } from './utils/createInputs';
 import { createButton } from './utils/createButton';
-import { DIFFICULTY, SYLLABARY } from './enums/enums';
+import {
+	AnswersDirection,
+	Difficulty,
+	QuestionType,
+	Syllabary,
+} from './enums/enums';
 import { createFormFieldset } from './utils/createFormFieldset';
 
 interface PreGameFormProps {
@@ -9,8 +14,10 @@ interface PreGameFormProps {
 	sets: Sets;
 	onPregameFormSubmit: (
 		username: string,
-		difficulty: DIFFICULTY,
-		syllabary: SYLLABARY,
+		questionsType: QuestionType,
+		answersDirection: AnswersDirection,
+		difficulty: Difficulty,
+		syllabary: Syllabary,
 		chapters: string[]
 	) => void;
 	isPlayer: boolean;
@@ -19,23 +26,29 @@ interface PreGameFormProps {
 const CLASS_NAMES = {
 	FORM: 'gameForm',
 	USERNAME: 'gameForm__username',
+	QUESTIONS_TYPE: 'gameForm__type',
+	ANSWERS_DIRECTION: 'gameForm__answersDirection',
 	DIFFICULTY: 'gameForm__difficulty',
+	SYLLABARY: 'gameForm__syllabary',
 	CHAPTERS: 'gameForm__chapters',
 	BUTTON: 'gameForm__button',
-	SYLLABARY: 'gameForm__syllabary',
 };
 
 class PreGameForm {
 	$parent: HTMLElement;
 	$sets: Sets;
-	$syllabaryLevels: SYLLABARY[];
-	$difficultyLevels: DIFFICULTY[];
+	$questionsType: QuestionType[];
+	$answersDirection: AnswersDirection[];
+	$syllabaryLevels: Syllabary[];
+	$difficultyLevels: Difficulty[];
 	$form: HTMLFormElement | null;
-	$selectedSyllabary: SYLLABARY;
+	$selectedSyllabary: Syllabary;
 	$onPregameFormSubmit: (
 		username: string,
-		difficulty: DIFFICULTY,
-		syllabary: SYLLABARY,
+		questionsType: QuestionType,
+		answersDirection: AnswersDirection,
+		difficulty: Difficulty,
+		syllabary: Syllabary,
 		chapters: string[]
 	) => void;
 	$isPlayer: boolean;
@@ -46,16 +59,26 @@ class PreGameForm {
 		onPregameFormSubmit,
 		isPlayer,
 	}: PreGameFormProps) {
+		this.$questionsType = [
+			QuestionType.CLOSED,
+			QuestionType.OPEN,
+			QuestionType.MIXED,
+		];
+		this.$answersDirection = [
+			AnswersDirection.TO_JAPANESE,
+			AnswersDirection.TO_ROMAJI,
+			AnswersDirection.MIXED,
+		];
 		this.$difficultyLevels = [
-			DIFFICULTY.EASY,
-			DIFFICULTY.MEDIUM,
-			DIFFICULTY.HARD,
-			DIFFICULTY.EXTREME,
+			Difficulty.EASY,
+			Difficulty.MEDIUM,
+			Difficulty.HARD,
+			Difficulty.EXTREME,
 		];
 		this.$syllabaryLevels = [
-			SYLLABARY.HIRAGANA,
-			SYLLABARY.KATAKANA,
-			SYLLABARY.MIXED,
+			Syllabary.HIRAGANA,
+			Syllabary.KATAKANA,
+			Syllabary.MIXED,
 		];
 		this.$sets = sets;
 		this.$parent = parent;
@@ -84,23 +107,26 @@ class PreGameForm {
 		this.$parent.appendChild(form);
 		this.$form = form;
 		// Create and append the username input section
-		this.$isPlayer ? null : this.createUsernameInput(form);
+		this.$isPlayer ? null : this.renderUsernameInput(form);
 
-		// Create and append the difficulty selection section
-		this.createDifficultySelection(form);
-
-		this.createSyllabarySelection(form);
-
+		// Create and append the question type selection section
+		this.renderQuestionTypeSelection(form);
+		// Create and append the answers direction selection section
+		this.renderAnswersDirectionSelection(form);
+		// Create and append the Difficulty selection section
+		this.renderDifficultySelection(form);
+		// Create and append the syllabary selection section
+		this.renderSyllabarySelection(form);
 		// Create and append the chapters selection section
 		this.createChaptersContainer(form);
 
 		// Create and append the start game button
-		this.createGameButton(form);
+		this.renderGameButton(form);
 		// Add an event listener to the form to handle form submission
 		form.addEventListener('submit', this.handleFormSubmit.bind(this));
 	}
 	// Method to create and append the username input section
-	createUsernameInput(parent: HTMLFormElement) {
+	renderUsernameInput(parent: HTMLFormElement) {
 		createInputs({
 			form: parent,
 			className: CLASS_NAMES.USERNAME,
@@ -111,8 +137,32 @@ class PreGameForm {
 			selectAll: false,
 		});
 	}
-	// Method to create and append the difficulty selection section
-	createDifficultySelection(parent: HTMLFormElement) {
+	// Method to create and append the question type selection section
+	renderQuestionTypeSelection(parent: HTMLFormElement) {
+		createInputs({
+			form: parent,
+			className: CLASS_NAMES.QUESTIONS_TYPE,
+			type: 'radio',
+			name: 'questionType',
+			required: true,
+			elements: this.$questionsType,
+			selectAll: false,
+		});
+	}
+	// Method to create and append the answers direction selection section
+	renderAnswersDirectionSelection(parent: HTMLFormElement) {
+		createInputs({
+			form: parent,
+			className: CLASS_NAMES.ANSWERS_DIRECTION,
+			type: 'radio',
+			name: 'answersDirection',
+			required: true,
+			elements: this.$answersDirection,
+			selectAll: false,
+		});
+	}
+	// Method to create and append the Difficulty selection section
+	renderDifficultySelection(parent: HTMLFormElement) {
 		createInputs({
 			form: parent,
 			className: CLASS_NAMES.DIFFICULTY,
@@ -124,7 +174,7 @@ class PreGameForm {
 		});
 	}
 
-	createSyllabarySelection(parent: HTMLFormElement) {
+	renderSyllabarySelection(parent: HTMLFormElement) {
 		const syllabary = createInputs({
 			form: parent,
 			className: CLASS_NAMES.SYLLABARY,
@@ -138,8 +188,8 @@ class PreGameForm {
 		syllabary.addEventListener('change', (event: Event) => {
 			const target = event.target as HTMLInputElement;
 
-			this.$selectedSyllabary = target.value as SYLLABARY;
-			this.createChaptersSelection();
+			this.$selectedSyllabary = target.value as Syllabary;
+			this.renderChaptersSelection();
 		});
 	}
 	createChaptersContainer(parent: HTMLFormElement) {
@@ -151,7 +201,7 @@ class PreGameForm {
 		this.$chaptersContainer = fieldset;
 	}
 	// Method to create and append the chapters selection section
-	createChaptersSelection() {
+	renderChaptersSelection() {
 		Array.from(this.$chaptersContainer?.children).forEach((child, index) => {
 			if (index !== 0) {
 				child.remove();
@@ -167,13 +217,13 @@ class PreGameForm {
 			labelText.length = 0;
 			this.$sets[chapter].forEach(character => {
 				switch (this.$selectedSyllabary) {
-					case SYLLABARY.HIRAGANA:
+					case Syllabary.HIRAGANA:
 						labelText.push(character.hiragana);
 						break;
-					case SYLLABARY.KATAKANA:
+					case Syllabary.KATAKANA:
 						labelText.push(character.katakana);
 						break;
-					case SYLLABARY.MIXED:
+					case Syllabary.MIXED:
 						labelText.push(character.hiragana);
 						labelText.push(character.katakana);
 						break;
@@ -197,7 +247,7 @@ class PreGameForm {
 	}
 
 	// Method to create and append the start game button
-	createGameButton(parent: HTMLElement) {
+	renderGameButton(parent: HTMLElement) {
 		createButton(parent, 'Start Game', 'submit');
 	}
 
@@ -209,12 +259,24 @@ class PreGameForm {
 		// Extract form data using FormData API
 		const formData = new FormData(form);
 		const username = formData.get('username') as string;
-		const difficulty = formData.get('difficulty') as DIFFICULTY;
+		const questionsType = formData.get('questionType') as QuestionType;
+		const answersDirection = formData.get(
+			'answersDirection'
+		) as AnswersDirection;
+		console.log(questionsType, answersDirection);
+		const difficulty = formData.get('difficulty') as Difficulty;
 		const chapters = formData.getAll('chapters') as string[];
-		const syllabary = formData.get('syllabary') as SYLLABARY;
+		const syllabary = formData.get('syllabary') as Syllabary;
 
 		this.unmount(); // Remove the form from the DOM
-		this.$onPregameFormSubmit(username, difficulty, syllabary, chapters);
+		this.$onPregameFormSubmit(
+			username,
+			questionsType,
+			answersDirection,
+			difficulty,
+			syllabary,
+			chapters
+		);
 	}
 }
 

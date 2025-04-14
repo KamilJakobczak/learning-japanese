@@ -1,5 +1,5 @@
 import { Sets } from '../data/db';
-import { DIFFICULTY, SYLLABARY, GAMESTATE } from './enums/enums';
+import { Difficulty, Syllabary, GameState } from './enums/enums';
 import GameRenderer from './GameRenderer';
 import { GameTime, QuestionData } from './interfaces/interface';
 import Player from './Player';
@@ -14,7 +14,7 @@ class Game {
 	$player: Player;
 	$difficulty: string;
 	$chapters: string[];
-	$syllabary: SYLLABARY;
+	$syllabary: Syllabary;
 	$score: number;
 	$appContainer: HTMLElement;
 	$sets: Sets;
@@ -31,8 +31,8 @@ class Game {
 	};
 	constructor(
 		player: Player,
-		difficulty: DIFFICULTY,
-		syllabary: SYLLABARY,
+		difficulty: Difficulty,
+		syllabary: Syllabary,
 		chapters: string[],
 		container: HTMLElement,
 		sets: Sets,
@@ -75,7 +75,7 @@ class Game {
 
 	render() {
 		this.$gameRenderer.render();
-		this.setGameTime(GAMESTATE.START);
+		this.setGameTime(GameState.START);
 	}
 	getScore(): number {
 		return (
@@ -89,12 +89,12 @@ class Game {
 	getCurrentQuestion(): number {
 		return this.$currentQuestion;
 	}
-	setGameTime(gameState: GAMESTATE): void {
+	setGameTime(gameState: GameState): void {
 		switch (gameState) {
-			case GAMESTATE.START:
+			case GameState.START:
 				this.$length.start = Date.now();
 				break;
-			case GAMESTATE.END:
+			case GameState.END:
 				this.$length.end = Date.now();
 				break;
 		}
@@ -135,10 +135,10 @@ class Game {
 	onQuestionAnswered(result: boolean, answer: string) {
 		if (result) {
 			switch (this.$questionsData[this.$currentQuestion].syllabary) {
-				case SYLLABARY.HIRAGANA:
+				case Syllabary.HIRAGANA:
 					this.$answeredCorrectly.hiragana.push(answer);
 					break;
-				case SYLLABARY.KATAKANA:
+				case Syllabary.KATAKANA:
 					this.$answeredCorrectly.katakana.push(answer);
 					break;
 				default:
@@ -146,10 +146,10 @@ class Game {
 			}
 		} else {
 			switch (this.$questionsData[this.$currentQuestion].syllabary) {
-				case SYLLABARY.HIRAGANA:
+				case Syllabary.HIRAGANA:
 					this.$answeredWrong.hiragana.push(answer);
 					break;
-				case SYLLABARY.KATAKANA:
+				case Syllabary.KATAKANA:
 					this.$answeredWrong.katakana.push(answer);
 					break;
 				default:
@@ -159,7 +159,7 @@ class Game {
 		this.incrementCurrentQuestion();
 
 		if (this.isGameFinished()) {
-			this.setGameTime(GAMESTATE.END);
+			this.setGameTime(GameState.END);
 
 			const gameResults = {
 				id: this.$gameId,

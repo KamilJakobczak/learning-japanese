@@ -6,7 +6,8 @@ const STATS_CLASS_NAMES = {
 	PLAYER_STATS: 'playerStats',
 	PLAYER_STATS_GENERAL: 'playerStats__general',
 	PLAYER_STATS_AVERAGE: 'playerStats__average',
-	PLAYER_STATS_SPECIFIC: 'playerStats__specific',
+	PLAYER_STATS_JAPANESE: 'playerStats__japanese',
+	PLAYER_STATS_ROMAJI: 'playerStats__romaji',
 };
 
 class StatsRenderer {
@@ -36,11 +37,12 @@ class StatsRenderer {
 			`${this.$name}'s stats`
 		);
 		this.$wrapper = statsWrapper;
-		this.createGeneralStats(statsWrapper);
-		this.createAverageStats(statsWrapper);
-		this.createSpecificStats(statsWrapper);
+		this.renderGeneralStats(statsWrapper);
+		this.renderAverageStats(statsWrapper);
+		this.renderJapaneseToRomajiStats(statsWrapper);
+		this.renderRomajiToJapaneseStats(statsWrapper);
 	}
-	createGeneralStats(wrapper: HTMLDivElement) {
+	renderGeneralStats(wrapper: HTMLDivElement) {
 		const generalStatsContainer = createContainer(
 			STATS_CLASS_NAMES.PLAYER_STATS_GENERAL,
 			wrapper,
@@ -49,37 +51,34 @@ class StatsRenderer {
 		);
 
 		const gamesPlayedPar = createParagraph(
-			`Games played: ${this.$stats.games}`,
+			`Games played: ${this.$stats.general.games}`,
 			generalStatsContainer
 		);
 		const questionsCountPar = createParagraph(
 			`Questions answered: ${
-				this.$stats.correctAnswers + this.$stats.wrongAnswers
+				this.$stats.general.correctAnswers +
+				this.$stats.general.wrongAnswers
 			}`,
 			generalStatsContainer
 		);
 		const correctAnswersPar = createParagraph(
-			`Correct answers: ${this.$stats.correctAnswers}`,
+			`Correct answers: ${this.$stats.general.correctAnswers}`,
 			generalStatsContainer
 		);
 		const wrongAnswersPar = createParagraph(
-			`Wrong answers: ${this.$stats.wrongAnswers}`,
+			`Wrong answers: ${this.$stats.general.wrongAnswers}`,
 			generalStatsContainer
 		);
 		const accuracyPar = createParagraph(
-			`Accuracy: ${
-				(this.$stats.correctAnswers /
-					(this.$stats.correctAnswers + this.$stats.wrongAnswers)) *
-				100
-			}%`,
+			`Accuracy: ${this.$stats.general.accuracy}`,
 			generalStatsContainer
 		);
 		const timePar = createParagraph(
-			`Total time: ${this.$stats.timeSpent.minutes}m ${this.$stats.timeSpent.seconds}s ${this.$stats.timeSpent.milliseconds}ms`,
+			`Total time: ${this.$stats.general.timeSpent.minutes}m ${this.$stats.general.timeSpent.seconds}s ${this.$stats.general.timeSpent.milliseconds}ms`,
 			generalStatsContainer
 		);
 	}
-	createAverageStats(wrapper: HTMLDivElement) {
+	renderAverageStats(wrapper: HTMLDivElement) {
 		const averageStatsContainer = createContainer(
 			STATS_CLASS_NAMES.PLAYER_STATS_AVERAGE,
 			wrapper,
@@ -87,12 +86,12 @@ class StatsRenderer {
 			`Average`
 		);
 		const perGameText = (): string => {
-			if (this.$stats.averageTime.perGame.slice(0, 2) === '0:') {
-				return `time per game: ${this.$stats.averageTime.perGame.slice(
+			if (this.$stats.general.averageTime.perGame.slice(0, 2) === '0:') {
+				return `time per game: ${this.$stats.general.averageTime.perGame.slice(
 					2
 				)}s`;
 			} else {
-				return `time per game: ${this.$stats.averageTime.perGame}min`;
+				return `time per game: ${this.$stats.general.averageTime.perGame}min`;
 			}
 		};
 
@@ -101,41 +100,55 @@ class StatsRenderer {
 			averageStatsContainer
 		);
 		const averageTimePerQuestionPar = createParagraph(
-			`time per question: ${this.$stats.averageTime.perQuestion.slice(2)}s`,
+			`time per question: ${this.$stats.general.averageTime.perQuestion.slice(
+				2
+			)}s`,
 			averageStatsContainer
 		);
 	}
-	createSpecificStats(wrapper: HTMLDivElement) {
-		const specificStatsContainer = createContainer(
-			STATS_CLASS_NAMES.PLAYER_STATS_SPECIFIC,
-			wrapper,
-			'h3',
-			`Specific`
-		);
+	createHirKatParagraphs(container: HTMLDivElement) {
 		const hiraganaCorrectAnswersPar = createParagraph(
 			`Hiragana correct answers: `,
-			specificStatsContainer
+			container
 		);
 		const hiraganaWrongAnswersPar = createParagraph(
 			`Hiragana wrong answers: `,
-			specificStatsContainer
+			container
 		);
 		const hiraganaAccuracyPar = createParagraph(
 			`Hiragana accuracy:`,
-			specificStatsContainer
+			container
 		);
 		const katakanaCorrectAnswersPar = createParagraph(
 			`Katakana correct answers: `,
-			specificStatsContainer
+			container
 		);
 		const katakanaWrongAnswersPar = createParagraph(
 			`Katakana wrong answers: `,
-			specificStatsContainer
+			container
 		);
 		const katakanaAccuracyPar = createParagraph(
 			`Katakana accuracy:`,
-			specificStatsContainer
+			container
 		);
+	}
+	renderJapaneseToRomajiStats(wrapper: HTMLDivElement) {
+		const japaneseToRomajiContainer = createContainer(
+			STATS_CLASS_NAMES.PLAYER_STATS_JAPANESE,
+			wrapper,
+			'h3',
+			`Japanese to Romaji`
+		);
+		this.createHirKatParagraphs(japaneseToRomajiContainer);
+	}
+	renderRomajiToJapaneseStats(wrapper: HTMLDivElement) {
+		const romajiToJapaneseContainer = createContainer(
+			STATS_CLASS_NAMES.PLAYER_STATS_ROMAJI,
+			wrapper,
+			'h3',
+			`Romaji to Japanese`
+		);
+		this.createHirKatParagraphs(romajiToJapaneseContainer);
 	}
 }
 

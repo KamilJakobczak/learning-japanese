@@ -90,6 +90,12 @@ class PlayerStats {
 			wrongAnswers,
 		};
 	}
+	getAccuracy(): string {
+		const correctAnswers = this.getAnswersStats().correctAnswers;
+		const wrongAnswers = this.getAnswersStats().wrongAnswers;
+		const accuracy = (correctAnswers / (correctAnswers + wrongAnswers)) * 100;
+		return accuracy.toFixed(2) + '%';
+	}
 	getSpecificCharacterStats(index: string): CharacterStats {
 		const character = characters[index];
 
@@ -143,21 +149,32 @@ class PlayerStats {
 	}
 
 	getStats(): Stats {
+		// const specificCharactersStats = Object.keys(characters).reduce(
+		// 	(acc, key) => {
+		// 		console.log(key);
+		// 		const romaji = characters[key].romaji;
+		// 		acc[romaji] = this.getSpecificCharacterStats(key);
+		// 		return acc;
+		// 	},
+		// 	{} as Record<string, CharacterStats>
+		// );
 		const specificCharactersStats = Object.keys(characters).reduce(
 			(acc, key) => {
-				const romaji = characters[key].romaji;
-				acc[romaji] = this.getSpecificCharacterStats(key);
+				acc[key] = this.getSpecificCharacterStats(key);
 				return acc;
 			},
 			{} as Record<string, CharacterStats>
 		);
 
 		const stats = {
-			games: this.$games.size,
-			correctAnswers: this.getAnswersStats().correctAnswers,
-			wrongAnswers: this.getAnswersStats().wrongAnswers,
-			timeSpent: this.getTotalTime(),
-			averageTime: this.getAverageTime(),
+			general: {
+				games: this.$games.size,
+				correctAnswers: this.getAnswersStats().correctAnswers,
+				wrongAnswers: this.getAnswersStats().wrongAnswers,
+				accuracy: this.getAccuracy(),
+				timeSpent: this.getTotalTime(),
+				averageTime: this.getAverageTime(),
+			},
 			specificCharactersStats,
 		};
 
