@@ -25,7 +25,6 @@ class GameRenderer {
 	) {
 		this.$questionsData = questionsData;
 		this.$appContainer = container;
-		this.$questionsData = questionsData;
 		this.$getCurrentQuestion = getCurrentQuestion;
 		this.$getScore = getScore;
 		this.$onQuestionAnswered = onQuestionAnswered;
@@ -80,13 +79,14 @@ class GameRenderer {
 	}
 	// Create and render a new question using the current question data
 	createQuestion() {
+		const index = this.$getCurrentQuestion();
 		const questionData: QuestionData = {
-			syllabary: this.$questionsData[this.$getCurrentQuestion()].syllabary,
-			question: this.$questionsData[this.$getCurrentQuestion()].question,
-			correctAnswer:
-				this.$questionsData[this.$getCurrentQuestion()].correctAnswer,
-			distractors:
-				this.$questionsData[this.$getCurrentQuestion()].distractors,
+			syllabary: this.$questionsData[index].syllabary,
+			question: this.$questionsData[index].question,
+			questionType: this.$questionsData[index].questionType,
+			answersDirection: this.$questionsData[index].answersDirection,
+			correctAnswer: this.$questionsData[index].correctAnswer,
+			distractors: this.$questionsData[index].distractors,
 		};
 
 		const question = new Question(

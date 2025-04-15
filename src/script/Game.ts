@@ -1,5 +1,11 @@
 import { Sets } from '../data/db';
-import { Difficulty, Syllabary, GameState } from './enums/enums';
+import {
+	Difficulty,
+	Syllabary,
+	GameState,
+	QuestionType,
+	AnswersDirection,
+} from './enums/enums';
 import GameRenderer from './GameRenderer';
 import { GameTime, QuestionData } from './interfaces/interface';
 import Player from './Player';
@@ -31,6 +37,8 @@ class Game {
 	};
 	constructor(
 		player: Player,
+		questionType: QuestionType,
+		answersDirection: AnswersDirection,
 		difficulty: Difficulty,
 		syllabary: Syllabary,
 		chapters: string[],
@@ -46,6 +54,8 @@ class Game {
 		this.$appContainer = container;
 		this.$sets = sets;
 		this.$questionsData = new Questions(
+			questionType,
+			answersDirection,
 			difficulty,
 			syllabary,
 			chapters,

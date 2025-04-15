@@ -1,9 +1,12 @@
+import { AnswersDirection, QuestionType } from './enums/enums';
 import { QuestionData } from './interfaces/interface';
 import QuestionRenderer from './QuestionRenderer';
 import { shuffleArray } from './utils/shuffleArray';
 
 class Question {
 	$container: HTMLElement;
+	$questionType: QuestionType;
+	$answersDirection: AnswersDirection;
 	$correctAnswer: string;
 	$distractors: string[];
 	$question: string;
@@ -15,6 +18,8 @@ class Question {
 	) {
 		this.$container = container;
 		this.$question = questionData.question;
+		this.$questionType = questionData.questionType;
+		this.$answersDirection = questionData.answersDirection;
 		this.$correctAnswer = questionData.correctAnswer;
 		this.$distractors = questionData.distractors;
 		this.$onQuestionAnswered = onQuestionAnswered;
@@ -22,6 +27,8 @@ class Question {
 	render() {
 		const renderer = new QuestionRenderer(
 			this.$question,
+			this.$questionType,
+			this.$answersDirection,
 			this.generateShuffledAnswers(),
 			this.validateAnswer.bind(this),
 			this.$container

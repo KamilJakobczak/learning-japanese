@@ -1,4 +1,4 @@
-import { Syllabary } from '../enums/enums';
+import { AnswersDirection, QuestionType, Syllabary } from '../enums/enums';
 
 export interface GameTime {
 	minutes: number;
@@ -21,6 +21,8 @@ export interface GameResults {
 }
 
 export interface QuestionData {
+	questionType?: QuestionType;
+	answersDirection: AnswersDirection;
 	syllabary: Syllabary;
 	question: string;
 	correctAnswer: string;

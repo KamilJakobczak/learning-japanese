@@ -1,7 +1,7 @@
 export enum QuestionType {
 	CLOSED = 'closed', // multiple choice
 	OPEN = 'open', // free input
-	MIXED = 'mixed',
+	MIXED = 'mix',
 }
 export enum AnswersDirection {
 	TO_JAPANESE = 'Romaji to Japanese',
@@ -17,7 +17,7 @@ export enum Difficulty {
 export enum Syllabary {
 	HIRAGANA = 'hiragana',
 	KATAKANA = 'katakana',
-	MIXED = 'mixed',
+	MIXED = 'both',
 }
 
 export enum GameState {

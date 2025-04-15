@@ -97,7 +97,7 @@ class GameWindow {
 	}
 	onPregameFormSubmit(
 		username: string,
-		questionsType: QuestionType,
+		questionType: QuestionType,
 		answersDirection: AnswersDirection,
 		difficulty: Difficulty,
 		syllabary: Syllabary,
@@ -109,6 +109,8 @@ class GameWindow {
 		}
 		const game = new Game(
 			this.$currentPlayer,
+			questionType,
+			answersDirection,
 			difficulty,
 			syllabary,
 			chapters,

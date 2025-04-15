@@ -37,8 +37,10 @@ const CLASS_NAMES = {
 class PreGameForm {
 	$parent: HTMLElement;
 	$sets: Sets;
-	$questionsType: QuestionType[];
+	$questionType: QuestionType[];
+	$selectedQuestionType: QuestionType;
 	$answersDirection: AnswersDirection[];
+	$selectedAnswersDirection: AnswersDirection;
 	$syllabaryLevels: Syllabary[];
 	$difficultyLevels: Difficulty[];
 	$form: HTMLFormElement | null;
@@ -59,7 +61,7 @@ class PreGameForm {
 		onPregameFormSubmit,
 		isPlayer,
 	}: PreGameFormProps) {
-		this.$questionsType = [
+		this.$questionType = [
 			QuestionType.CLOSED,
 			QuestionType.OPEN,
 			QuestionType.MIXED,
@@ -139,19 +141,23 @@ class PreGameForm {
 	}
 	// Method to create and append the question type selection section
 	renderQuestionTypeSelection(parent: HTMLFormElement) {
-		createInputs({
+		const questionType = createInputs({
 			form: parent,
 			className: CLASS_NAMES.QUESTIONS_TYPE,
 			type: 'radio',
 			name: 'questionType',
 			required: true,
-			elements: this.$questionsType,
+			elements: this.$questionType,
 			selectAll: false,
+		});
+		questionType.addEventListener('change', (event: Event) => {
+			const target = event.target as HTMLInputElement;
+			this.$selectedQuestionType = target.value as QuestionType;
 		});
 	}
 	// Method to create and append the answers direction selection section
 	renderAnswersDirectionSelection(parent: HTMLFormElement) {
-		createInputs({
+		const answersDirection = createInputs({
 			form: parent,
 			className: CLASS_NAMES.ANSWERS_DIRECTION,
 			type: 'radio',
@@ -159,6 +165,13 @@ class PreGameForm {
 			required: true,
 			elements: this.$answersDirection,
 			selectAll: false,
+		});
+		answersDirection.addEventListener('change', (event: Event) => {
+			const target = event.target as HTMLInputElement;
+
+			this.$selectedAnswersDirection = target.value as AnswersDirection;
+			console.log(target.value, this.$selectedAnswersDirection);
+			this.renderChaptersSelection();
 		});
 	}
 	// Method to create and append the Difficulty selection section
@@ -202,6 +215,9 @@ class PreGameForm {
 	}
 	// Method to create and append the chapters selection section
 	renderChaptersSelection() {
+		if (!this.$selectedAnswersDirection || !this.$selectedSyllabary) {
+			return;
+		}
 		Array.from(this.$chaptersContainer?.children).forEach((child, index) => {
 			if (index !== 0) {
 				child.remove();
@@ -216,16 +232,24 @@ class PreGameForm {
 		chapters.forEach(chapter => {
 			labelText.length = 0;
 			this.$sets[chapter].forEach(character => {
-				switch (this.$selectedSyllabary) {
-					case Syllabary.HIRAGANA:
-						labelText.push(character.hiragana);
+				switch (this.$selectedAnswersDirection) {
+					case AnswersDirection.TO_JAPANESE:
+						labelText.push(character.romaji);
 						break;
-					case Syllabary.KATAKANA:
-						labelText.push(character.katakana);
-						break;
-					case Syllabary.MIXED:
-						labelText.push(character.hiragana);
-						labelText.push(character.katakana);
+					default:
+						switch (this.$selectedSyllabary) {
+							case Syllabary.HIRAGANA:
+								labelText.push(character.hiragana);
+								break;
+							case Syllabary.KATAKANA:
+								labelText.push(character.katakana);
+								break;
+							case Syllabary.MIXED:
+								labelText.push(character.hiragana, character.katakana);
+								break;
+							default:
+								break;
+						}
 						break;
 				}
 			});
@@ -263,10 +287,14 @@ class PreGameForm {
 		const answersDirection = formData.get(
 			'answersDirection'
 		) as AnswersDirection;
-		console.log(questionsType, answersDirection);
 		const difficulty = formData.get('difficulty') as Difficulty;
 		const chapters = formData.getAll('chapters') as string[];
 		const syllabary = formData.get('syllabary') as Syllabary;
+		// Make sure at least one chapter is selected
+		if (chapters.length === 0) {
+			alert('Pick at least one chapter');
+			return;
+		}
 
 		this.unmount(); // Remove the form from the DOM
 		this.$onPregameFormSubmit(

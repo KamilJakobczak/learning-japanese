@@ -1,3 +1,4 @@
+import { AnswersDirection, QuestionType } from './enums/enums';
 import { createButton } from './utils/createButton';
 import { createInputs } from './utils/createInputs';
 
@@ -10,18 +11,22 @@ class QuestionRenderer {
 	$answers: string[];
 	$container: HTMLElement;
 	$question: string;
+	$questionType: QuestionType;
+	$answersDirection: AnswersDirection;
 	$checkAnswer: (answer: string) => void;
 	$form: HTMLFormElement | null;
-
 	constructor(
 		question: string,
+		questionType: QuestionType,
+		answersDirection: AnswersDirection,
 		answers: string[],
 		checkAnswer: (answer: string) => void,
 		container: HTMLElement
 	) {
 		this.$container = container;
 		this.$question = question;
-
+		this.$questionType = questionType;
+		this.$answersDirection = answersDirection;
 		this.$answers = answers;
 		this.$checkAnswer = checkAnswer;
 		this.$form = null;
@@ -56,15 +61,28 @@ class QuestionRenderer {
 	}
 
 	renderAnswers() {
-		createInputs({
-			form: this.$form,
-			className: CLASS_NAMES.ANSWER,
-			type: 'radio',
-			name: 'answer',
-			required: true,
-			elements: this.$answers,
-			selectAll: false,
-		});
+		if (this.$answersDirection === AnswersDirection.TO_ROMAJI) {
+			createInputs({
+				form: this.$form,
+				className: CLASS_NAMES.ANSWER,
+				type: 'radio',
+				name: 'answer',
+				required: true,
+				elements: this.$answers,
+				selectAll: false,
+			});
+		}
+		if (this.$answersDirection === AnswersDirection.TO_JAPANESE) {
+			createInputs({
+				form: this.$form,
+				className: CLASS_NAMES.ANSWER,
+				type: 'text',
+				name: 'answer',
+				required: true,
+				elements: [''],
+				selectAll: false,
+			});
+		}
 	}
 
 	renderSubmitButton() {
