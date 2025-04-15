@@ -4,8 +4,8 @@ export enum QuestionType {
 	MIXED = 'mix',
 }
 export enum AnswersDirection {
-	TO_JAPANESE = 'Romaji to Japanese',
-	TO_ROMAJI = 'Japanese to Romaji',
+	TO_JAPANESE = 'japanese',
+	TO_ROMAJI = 'romaji',
 	MIXED = 'mixed',
 }
 export enum Difficulty {

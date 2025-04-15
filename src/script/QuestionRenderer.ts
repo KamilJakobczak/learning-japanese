@@ -61,28 +61,15 @@ class QuestionRenderer {
 	}
 
 	renderAnswers() {
-		if (this.$answersDirection === AnswersDirection.TO_ROMAJI) {
-			createInputs({
-				form: this.$form,
-				className: CLASS_NAMES.ANSWER,
-				type: 'radio',
-				name: 'answer',
-				required: true,
-				elements: this.$answers,
-				selectAll: false,
-			});
-		}
-		if (this.$answersDirection === AnswersDirection.TO_JAPANESE) {
-			createInputs({
-				form: this.$form,
-				className: CLASS_NAMES.ANSWER,
-				type: 'text',
-				name: 'answer',
-				required: true,
-				elements: [''],
-				selectAll: false,
-			});
-		}
+		createInputs({
+			form: this.$form,
+			className: CLASS_NAMES.ANSWER,
+			type: 'radio',
+			name: 'answer',
+			required: true,
+			elements: this.$answers,
+			selectAll: false,
+		});
 	}
 
 	renderSubmitButton() {

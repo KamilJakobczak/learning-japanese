@@ -295,7 +295,13 @@ class PreGameForm {
 			alert('Pick at least one chapter');
 			return;
 		}
-
+		console.log(
+			questionsType,
+			answersDirection,
+			difficulty,
+			syllabary,
+			chapters
+		);
 		this.unmount(); // Remove the form from the DOM
 		this.$onPregameFormSubmit(
 			username,

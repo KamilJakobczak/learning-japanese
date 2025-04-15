@@ -86,6 +86,7 @@ class Game {
 	render() {
 		this.$gameRenderer.render();
 		this.setGameTime(GameState.START);
+		console.log(this.$questionsData);
 	}
 	getScore(): number {
 		return (
