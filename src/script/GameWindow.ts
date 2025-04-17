@@ -2,12 +2,7 @@ import PreGameForm from './PreGameForm';
 import { Sets } from '../data/db'; // Import the Sets type from the database module
 import Game from './Game';
 import Player from './Player';
-import {
-	AnswersDirection,
-	Difficulty,
-	QuestionType,
-	Syllabary,
-} from './enums/enums';
+import { AnswersDirection, Difficulty, Syllabary } from './enums/enums';
 import StatsRenderer from './StatsRenderer';
 
 class GameWindow {
@@ -33,7 +28,7 @@ class GameWindow {
 
 	render() {
 		if (this.$game) {
-			this.$playerStats.unmount();
+			this.$playerStats && this.$playerStats.unmount();
 			this.renderGame(this.$game);
 		} else {
 			if (!this.$container) {
@@ -46,7 +41,10 @@ class GameWindow {
 				}
 			}
 			this.renderPreGameForm(this.$container);
-			this.renderPlayerStats(); // Render player stats if available
+			if (this.$currentPlayer) {
+				console.log('Im HERE');
+				this.renderPlayerStats(); // Render player stats if available
+			}
 		}
 	}
 	createGameWindow() {
@@ -85,8 +83,9 @@ class GameWindow {
 		game.render();
 	}
 	renderPlayerStats() {
+		console.log(this.$currentPlayer);
 		const playerStats = this.$currentPlayer.$playerStats;
-
+		console.log(playerStats);
 		const statsRenderer = new StatsRenderer(
 			this.$currentPlayer.$name,
 			this.$container,
@@ -97,7 +96,6 @@ class GameWindow {
 	}
 	onPregameFormSubmit(
 		username: string,
-		questionType: QuestionType,
 		answersDirection: AnswersDirection,
 		difficulty: Difficulty,
 		syllabary: Syllabary,
@@ -109,7 +107,6 @@ class GameWindow {
 		}
 		const game = new Game(
 			this.$currentPlayer,
-			questionType,
 			answersDirection,
 			difficulty,
 			syllabary,

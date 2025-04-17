@@ -1,5 +1,15 @@
-import { AnswersDirection, QuestionType, Syllabary } from '../enums/enums';
+import { AnswersDirection, Syllabary } from '../enums/enums';
 
+export interface Answers {
+	toRomaji: {
+		hiragana: string[];
+		katakana: string[];
+	};
+	toJapanese: {
+		hiragana: string[];
+		katakana: string[];
+	};
+}
 export interface GameTime {
 	minutes: number;
 	seconds: number;
@@ -10,18 +20,11 @@ export interface GameResults {
 	id: string;
 	time: GameTime;
 	questionsCount: number;
-	correctAnswers: {
-		hiragana: string[];
-		katakana: string[];
-	};
-	wrongAnswers: {
-		hiragana: string[];
-		katakana: string[];
-	};
+	correctAnswers: Answers;
+	wrongAnswers: Answers;
 }
 
 export interface QuestionData {
-	questionType?: QuestionType;
 	answersDirection: AnswersDirection;
 	syllabary: Syllabary;
 	question: string;
@@ -29,7 +32,7 @@ export interface QuestionData {
 	distractors: string[];
 }
 
-interface GeneralStats {
+export interface Stats {
 	games: number;
 	correctAnswers: number;
 	wrongAnswers: number;
@@ -37,9 +40,9 @@ interface GeneralStats {
 	timeSpent: { minutes: number; seconds: number; milliseconds: number };
 	averageTime: { perGame: string; perQuestion: string };
 }
-export interface Stats {
-	general: GeneralStats;
-	japaneseToRomaji?: GeneralStats;
-	romajiToJapanese?: GeneralStats;
+export interface PlayerStatsInterface {
+	general: Stats;
+	japaneseToRomaji?: Stats;
+	romajiToJapanese?: Stats;
 	specificCharactersStats: {};
 }

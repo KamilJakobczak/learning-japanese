@@ -49,6 +49,10 @@ class Player {
 			throw new Error('Game ID does not match player name');
 		}
 		this.$games.set(this.$games.size, gameResults);
+		if (!this.$playerStats) {
+			const playerStats = new PlayerStats(this.$games, this.$name);
+			this.$playerStats = playerStats;
+		}
 		this.saveToLocalStorage();
 	}
 	calculateScore() {

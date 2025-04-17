@@ -1,29 +1,22 @@
 import { Character, Sets } from '../data/db';
-import {
-	AnswersDirection,
-	Difficulty,
-	QuestionType,
-	Syllabary,
-} from './enums/enums';
+import { AnswersDirection, Difficulty, Syllabary } from './enums/enums';
 import { QuestionData } from './interfaces/interface';
 import { shuffleArray } from './utils/shuffleArray';
 
 class Questions {
 	$chapters: string[];
-	$questionType: QuestionType;
+
 	$answersDirection: AnswersDirection;
 	$difficulty: Difficulty;
 	$sets: Sets;
 	$syllabary: Syllabary;
 	constructor(
-		questionType: QuestionType,
 		answersDirection: AnswersDirection,
 		difficulty: Difficulty,
 		syllabary: Syllabary,
 		chapters: string[],
 		sets: Sets
 	) {
-		this.$questionType = questionType;
 		this.$answersDirection = answersDirection;
 		this.$difficulty = difficulty;
 		this.$chapters = chapters;

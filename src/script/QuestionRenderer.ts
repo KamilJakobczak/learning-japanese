@@ -1,4 +1,4 @@
-import { AnswersDirection, QuestionType } from './enums/enums';
+import { AnswersDirection } from './enums/enums';
 import { createButton } from './utils/createButton';
 import { createInputs } from './utils/createInputs';
 
@@ -11,13 +11,11 @@ class QuestionRenderer {
 	$answers: string[];
 	$container: HTMLElement;
 	$question: string;
-	$questionType: QuestionType;
 	$answersDirection: AnswersDirection;
 	$checkAnswer: (answer: string) => void;
 	$form: HTMLFormElement | null;
 	constructor(
 		question: string,
-		questionType: QuestionType,
 		answersDirection: AnswersDirection,
 		answers: string[],
 		checkAnswer: (answer: string) => void,
@@ -25,7 +23,6 @@ class QuestionRenderer {
 	) {
 		this.$container = container;
 		this.$question = question;
-		this.$questionType = questionType;
 		this.$answersDirection = answersDirection;
 		this.$answers = answers;
 		this.$checkAnswer = checkAnswer;

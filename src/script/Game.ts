@@ -3,11 +3,10 @@ import {
 	Difficulty,
 	Syllabary,
 	GameState,
-	QuestionType,
 	AnswersDirection,
 } from './enums/enums';
 import GameRenderer from './GameRenderer';
-import { GameTime, QuestionData } from './interfaces/interface';
+import { Answers, GameTime, QuestionData } from './interfaces/interface';
 import Player from './Player';
 import Questions from './Questions';
 
@@ -27,17 +26,10 @@ class Game {
 	$questionsData: QuestionData[];
 	$currentQuestion: number;
 	$length: { start: number; end: number };
-	$answeredCorrectly: {
-		hiragana: string[];
-		katakana: string[];
-	};
-	$answeredWrong: {
-		hiragana: string[];
-		katakana: string[];
-	};
+	$answeredCorrectly: Answers;
+	$answeredWrong: Answers;
 	constructor(
 		player: Player,
-		questionType: QuestionType,
 		answersDirection: AnswersDirection,
 		difficulty: Difficulty,
 		syllabary: Syllabary,
@@ -54,7 +46,6 @@ class Game {
 		this.$appContainer = container;
 		this.$sets = sets;
 		this.$questionsData = new Questions(
-			questionType,
 			answersDirection,
 			difficulty,
 			syllabary,
@@ -74,24 +65,37 @@ class Game {
 			onPlayAgain
 		);
 		this.$answeredCorrectly = {
-			hiragana: [],
-			katakana: [],
+			toJapanese: {
+				hiragana: [],
+				katakana: [],
+			},
+			toRomaji: {
+				hiragana: [],
+				katakana: [],
+			},
 		};
 		this.$answeredWrong = {
-			hiragana: [],
-			katakana: [],
+			toJapanese: {
+				hiragana: [],
+				katakana: [],
+			},
+			toRomaji: {
+				hiragana: [],
+				katakana: [],
+			},
 		};
 	}
 
 	render() {
 		this.$gameRenderer.render();
 		this.setGameTime(GameState.START);
-		console.log(this.$questionsData);
 	}
 	getScore(): number {
 		return (
-			this.$answeredCorrectly.hiragana.length +
-			this.$answeredCorrectly.katakana.length
+			this.$answeredCorrectly.toJapanese.hiragana.length +
+			this.$answeredCorrectly.toJapanese.katakana.length +
+			this.$answeredCorrectly.toRomaji.hiragana.length +
+			this.$answeredCorrectly.toRomaji.katakana.length
 		);
 	}
 	getGameId(): string {
@@ -114,9 +118,6 @@ class Game {
 	incrementCurrentQuestion(): void {
 		this.$currentQuestion++;
 	}
-	// incrementScore(): void {
-	// 	this.$score++;
-	// }
 
 	createGameId(): string {
 		if (!this.$player) {
@@ -143,30 +144,63 @@ class Game {
 		return this.$currentQuestion >= this.$questionsData.length;
 	}
 
-	onQuestionAnswered(result: boolean, answer: string) {
+	onQuestionAnswered(
+		result: boolean,
+		answer: string,
+		answersDirection: AnswersDirection,
+		syllabary: Syllabary
+	) {
+		console.log(result, answer, answersDirection, syllabary);
 		if (result) {
-			switch (this.$questionsData[this.$currentQuestion].syllabary) {
-				case Syllabary.HIRAGANA:
-					this.$answeredCorrectly.hiragana.push(answer);
+			switch (answersDirection) {
+				case AnswersDirection.TO_JAPANESE:
+					switch (syllabary) {
+						case Syllabary.HIRAGANA:
+							this.$answeredCorrectly.toJapanese.hiragana.push(answer);
+							break;
+						case Syllabary.KATAKANA:
+							this.$answeredCorrectly.toJapanese.katakana.push(answer);
+							break;
+					}
 					break;
-				case Syllabary.KATAKANA:
-					this.$answeredCorrectly.katakana.push(answer);
+				case AnswersDirection.TO_ROMAJI:
+					switch (syllabary) {
+						case Syllabary.HIRAGANA:
+							this.$answeredCorrectly.toRomaji.hiragana.push(answer);
+							break;
+						case Syllabary.KATAKANA:
+							this.$answeredCorrectly.toRomaji.katakana.push(answer);
+							break;
+					}
 					break;
 				default:
 					break;
 			}
 		} else {
-			switch (this.$questionsData[this.$currentQuestion].syllabary) {
-				case Syllabary.HIRAGANA:
-					this.$answeredWrong.hiragana.push(answer);
-					break;
-				case Syllabary.KATAKANA:
-					this.$answeredWrong.katakana.push(answer);
-					break;
+			switch (answersDirection) {
+				case AnswersDirection.TO_JAPANESE:
+					switch (syllabary) {
+						case Syllabary.HIRAGANA:
+							this.$answeredWrong.toJapanese.hiragana.push(answer);
+							break;
+						case Syllabary.KATAKANA:
+							this.$answeredWrong.toJapanese.katakana.push(answer);
+							break;
+					}
+				case AnswersDirection.TO_ROMAJI:
+					switch (syllabary) {
+						case Syllabary.HIRAGANA:
+							this.$answeredWrong.toRomaji.hiragana.push(answer);
+							break;
+						case Syllabary.KATAKANA:
+							this.$answeredWrong.toRomaji.katakana.push(answer);
+							break;
+					}
 				default:
 					break;
 			}
 		}
+
 		this.incrementCurrentQuestion();
 
 		if (this.isGameFinished()) {
@@ -176,14 +210,8 @@ class Game {
 				id: this.$gameId,
 				time: this.getGameTime(),
 				questionsCount: this.$questionsData.length,
-				correctAnswers: {
-					hiragana: this.$answeredCorrectly.hiragana,
-					katakana: this.$answeredCorrectly.katakana,
-				},
-				wrongAnswers: {
-					hiragana: this.$answeredWrong.hiragana,
-					katakana: this.$answeredWrong.katakana,
-				},
+				correctAnswers: this.$answeredCorrectly,
+				wrongAnswers: this.$answeredWrong,
 			};
 			this.$player.addGameStatistics(gameResults);
 			this.$gameRenderer.displayResults();

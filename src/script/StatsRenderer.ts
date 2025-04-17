@@ -1,4 +1,4 @@
-import { Stats } from './interfaces/interface';
+import { PlayerStatsInterface, Stats } from './interfaces/interface';
 import { createContainer } from './utils/createContainer';
 import { createParagraph } from './utils/createParagraph';
 
@@ -12,10 +12,14 @@ const STATS_CLASS_NAMES = {
 
 class StatsRenderer {
 	$name: string;
-	$stats: Stats;
+	$stats: PlayerStatsInterface;
 	$container: HTMLElement;
 	$wrapper: HTMLDivElement | null;
-	constructor(name: string, container: HTMLElement, stats: Stats) {
+	constructor(
+		name: string,
+		container: HTMLElement,
+		stats: PlayerStatsInterface
+	) {
 		this.$name = name;
 		this.$stats = stats;
 		this.$container = container;

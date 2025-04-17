@@ -1,5 +1,9 @@
 import { characters } from '../data/db';
-import { GameResults, Stats } from './interfaces/interface';
+import {
+	GameResults,
+	PlayerStatsInterface,
+	Stats,
+} from './interfaces/interface';
 
 import convertMs from './utils/convertMs';
 import { timeToString } from './utils/timeToString';
@@ -64,12 +68,79 @@ class PlayerStats {
 			perQuestion: timeToString(timePerQuestion),
 		};
 	}
-	getAnswersStats(): { correctAnswers: number; wrongAnswers: number } {
+	getGeneralStats(): Stats {
+		// const specificCharactersStats = Object.keys(characters).reduce(
+		// 	(acc, key) => {
+		// 		console.log(key);
+		// 		const romaji = characters[key].romaji;
+		// 		acc[romaji] = this.getSpecificCharacterStats(key);
+		// 		return acc;
+		// 	},
+		// 	{} as Record<string, CharacterStats>
+		// );
+		// const specificCharactersStats = Object.keys(characters).reduce(
+		// 	(acc, key) => {
+		// 		acc[key] = this.getSpecificCharacterStats(key);
+		// 		return acc;
+		// 	},
+		// 	{} as Record<string, CharacterStats>
+		// );
+		const correctAnswers = this.calculateAnswersStats().correctAnswers;
+		const wrongAnswers = this.calculateAnswersStats().wrongAnswers;
+
+		const stats = {
+			games: this.$games.size,
+			correctAnswers,
+			wrongAnswers,
+			accuracy: this.getAccuracy(correctAnswers, wrongAnswers),
+			timeSpent: this.getTotalTime(),
+			averageTime: this.getAverageTime(),
+		};
+		return stats;
+	}
+	getJapaneseToRomajiStats(): Stats {
+		return {
+			games: 0,
+			correctAnswers: 0,
+			wrongAnswers: 0,
+			accuracy: '',
+			timeSpent: {
+				minutes: 0,
+				seconds: 0,
+				milliseconds: 0,
+			},
+			averageTime: {
+				perGame: '',
+				perQuestion: '',
+			},
+		};
+	}
+	getRomajiToJapaneseStats(): Stats {
+		return {
+			games: 0,
+			correctAnswers: 0,
+			wrongAnswers: 0,
+			accuracy: '',
+			timeSpent: {
+				minutes: 0,
+				seconds: 0,
+				milliseconds: 0,
+			},
+			averageTime: {
+				perGame: '',
+				perQuestion: '',
+			},
+		};
+	}
+	calculateAnswersStats(): { correctAnswers: number; wrongAnswers: number } {
 		const correctAnswers = Array.from(this.$games.values()).reduce(
 			(acc, entry) => {
 				acc +=
-					entry.correctAnswers.hiragana.length +
-					entry.correctAnswers.katakana.length;
+					entry.correctAnswers.toJapanese.hiragana.length +
+					entry.correctAnswers.toJapanese.katakana.length +
+					entry.correctAnswers.toRomaji.hiragana.length +
+					entry.correctAnswers.toRomaji.katakana.length;
+
 				return acc;
 			},
 			0
@@ -78,8 +149,10 @@ class PlayerStats {
 		const wrongAnswers = Array.from(this.$games.values()).reduce(
 			(acc, entry) => {
 				acc +=
-					entry.wrongAnswers.hiragana.length +
-					entry.wrongAnswers.katakana.length;
+					entry.wrongAnswers.toJapanese.hiragana.length +
+					entry.wrongAnswers.toJapanese.katakana.length +
+					entry.wrongAnswers.toRomaji.hiragana.length +
+					entry.wrongAnswers.toRomaji.katakana.length;
 				return acc;
 			},
 			0
@@ -90,97 +163,77 @@ class PlayerStats {
 			wrongAnswers,
 		};
 	}
-	getAccuracy(): string {
-		const correctAnswers = this.getAnswersStats().correctAnswers;
-		const wrongAnswers = this.getAnswersStats().wrongAnswers;
-		const accuracy = (correctAnswers / (correctAnswers + wrongAnswers)) * 100;
+	getAccuracy(correct: number, wrong: number): string {
+		const accuracy = (correct / (correct + wrong)) * 100;
 		return accuracy.toFixed(2) + '%';
 	}
-	getSpecificCharacterStats(index: string): CharacterStats {
-		const character = characters[index];
+	// getSpecificCharacterStats(index: string): CharacterStats {
+	// 	const character = characters[index];
 
-		const correctHiraganaAnswers = Array.from(this.$games.values()).reduce(
-			(acc, entry) => {
-				const x = entry.correctAnswers.hiragana.filter(
-					answer => answer === character.romaji
-				);
-				return acc + x.length;
-			},
-			0
-		);
-		const correctKatakanaAnswers = Array.from(this.$games.values()).reduce(
-			(acc, entry) => {
-				const x = entry.correctAnswers.katakana.filter(
-					answer => answer === character.romaji
-				);
-				return acc + x.length;
-			},
-			0
-		);
-		const wrongHiraganaAnswers = Array.from(this.$games.values()).reduce(
-			(acc, entry) => {
-				const x = entry.wrongAnswers.hiragana.filter(
-					answer => answer === character.romaji
-				);
-				return acc + x.length;
-			},
-			0
-		);
-		const wrongKatakanaAnswers = Array.from(this.$games.values()).reduce(
-			(acc, entry) => {
-				const x = entry.wrongAnswers.katakana.filter(
-					answer => answer === character.romaji
-				);
-				return acc + x.length;
-			},
-			0
-		);
+	// 	const correctHiraganaAnswers = Array.from(this.$games.values()).reduce(
+	// 		(acc, entry) => {
+	// 			const x = entry.correctAnswers.hiragana.filter(
+	// 				answer => answer === character.romaji
+	// 			);
+	// 			return acc + x.length;
+	// 		},
+	// 		0
+	// 	);
+	// 	const correctKatakanaAnswers = Array.from(this.$games.values()).reduce(
+	// 		(acc, entry) => {
+	// 			const x = entry.correctAnswers.katakana.filter(
+	// 				answer => answer === character.romaji
+	// 			);
+	// 			return acc + x.length;
+	// 		},
+	// 		0
+	// 	);
+	// 	const wrongHiraganaAnswers = Array.from(this.$games.values()).reduce(
+	// 		(acc, entry) => {
+	// 			const x = entry.wrongAnswers.hiragana.filter(
+	// 				answer => answer === character.romaji
+	// 			);
+	// 			return acc + x.length;
+	// 		},
+	// 		0
+	// 	);
+	// 	const wrongKatakanaAnswers = Array.from(this.$games.values()).reduce(
+	// 		(acc, entry) => {
+	// 			const x = entry.wrongAnswers.katakana.filter(
+	// 				answer => answer === character.romaji
+	// 			);
+	// 			return acc + x.length;
+	// 		},
+	// 		0
+	// 	);
 
+	// 	return {
+	// 		correctAnswers: {
+	// 			hiragana: correctHiraganaAnswers,
+	// 			katakana: correctKatakanaAnswers,
+	// 		},
+	// 		wrongAnswers: {
+	// 			hiragana: wrongHiraganaAnswers,
+	// 			katakana: wrongKatakanaAnswers,
+	// 		},
+	// 	};
+	// }
+	getStats(): PlayerStatsInterface {
 		return {
-			correctAnswers: {
-				hiragana: correctHiraganaAnswers,
-				katakana: correctKatakanaAnswers,
-			},
-			wrongAnswers: {
-				hiragana: wrongHiraganaAnswers,
-				katakana: wrongKatakanaAnswers,
-			},
+			general: this.getGeneralStats(),
+			japaneseToRomaji: this.getJapaneseToRomajiStats(),
+			romajiToJapanese: this.getRomajiToJapaneseStats(),
+			specificCharactersStats: {},
 		};
 	}
+	// getStats(): Stats {
+	//
 
-	getStats(): Stats {
-		// const specificCharactersStats = Object.keys(characters).reduce(
-		// 	(acc, key) => {
-		// 		console.log(key);
-		// 		const romaji = characters[key].romaji;
-		// 		acc[romaji] = this.getSpecificCharacterStats(key);
-		// 		return acc;
-		// 	},
-		// 	{} as Record<string, CharacterStats>
-		// );
-		const specificCharactersStats = Object.keys(characters).reduce(
-			(acc, key) => {
-				acc[key] = this.getSpecificCharacterStats(key);
-				return acc;
-			},
-			{} as Record<string, CharacterStats>
-		);
+	//
 
-		const stats = {
-			general: {
-				games: this.$games.size,
-				correctAnswers: this.getAnswersStats().correctAnswers,
-				wrongAnswers: this.getAnswersStats().wrongAnswers,
-				accuracy: this.getAccuracy(),
-				timeSpent: this.getTotalTime(),
-				averageTime: this.getAverageTime(),
-			},
-			specificCharactersStats,
-		};
-
-		console.log(stats);
-		return stats;
-	}
+	// 	console.log(stats);
+	// 	// return stats;
+	// }
 }
 
 export default PlayerStats;

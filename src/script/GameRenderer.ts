@@ -83,7 +83,6 @@ class GameRenderer {
 		const questionData: QuestionData = {
 			syllabary: this.$questionsData[index].syllabary,
 			question: this.$questionsData[index].question,
-			questionType: this.$questionsData[index].questionType,
 			answersDirection: this.$questionsData[index].answersDirection,
 			correctAnswer: this.$questionsData[index].correctAnswer,
 			distractors: this.$questionsData[index].distractors,

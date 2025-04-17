@@ -1,8 +1,3 @@
-export enum QuestionType {
-	CLOSED = 'closed', // multiple choice
-	OPEN = 'open', // free input
-	MIXED = 'mix',
-}
 export enum AnswersDirection {
 	TO_JAPANESE = 'japanese',
 	TO_ROMAJI = 'romaji',

@@ -1,12 +1,7 @@
 import { Sets } from '../data/db';
 import { createInputs } from './utils/createInputs';
 import { createButton } from './utils/createButton';
-import {
-	AnswersDirection,
-	Difficulty,
-	QuestionType,
-	Syllabary,
-} from './enums/enums';
+import { AnswersDirection, Difficulty, Syllabary } from './enums/enums';
 import { createFormFieldset } from './utils/createFormFieldset';
 
 interface PreGameFormProps {
@@ -14,7 +9,6 @@ interface PreGameFormProps {
 	sets: Sets;
 	onPregameFormSubmit: (
 		username: string,
-		questionsType: QuestionType,
 		answersDirection: AnswersDirection,
 		difficulty: Difficulty,
 		syllabary: Syllabary,
@@ -37,8 +31,7 @@ const CLASS_NAMES = {
 class PreGameForm {
 	$parent: HTMLElement;
 	$sets: Sets;
-	$questionType: QuestionType[];
-	$selectedQuestionType: QuestionType;
+
 	$answersDirection: AnswersDirection[];
 	$selectedAnswersDirection: AnswersDirection;
 	$syllabaryLevels: Syllabary[];
@@ -47,7 +40,6 @@ class PreGameForm {
 	$selectedSyllabary: Syllabary;
 	$onPregameFormSubmit: (
 		username: string,
-		questionsType: QuestionType,
 		answersDirection: AnswersDirection,
 		difficulty: Difficulty,
 		syllabary: Syllabary,
@@ -61,14 +53,9 @@ class PreGameForm {
 		onPregameFormSubmit,
 		isPlayer,
 	}: PreGameFormProps) {
-		this.$questionType = [
-			QuestionType.CLOSED,
-			QuestionType.OPEN,
-			QuestionType.MIXED,
-		];
 		this.$answersDirection = [
-			AnswersDirection.TO_JAPANESE,
 			AnswersDirection.TO_ROMAJI,
+			AnswersDirection.TO_JAPANESE,
 			AnswersDirection.MIXED,
 		];
 		this.$difficultyLevels = [
@@ -111,8 +98,6 @@ class PreGameForm {
 		// Create and append the username input section
 		this.$isPlayer ? null : this.renderUsernameInput(form);
 
-		// Create and append the question type selection section
-		this.renderQuestionTypeSelection(form);
 		// Create and append the answers direction selection section
 		this.renderAnswersDirectionSelection(form);
 		// Create and append the Difficulty selection section
@@ -121,7 +106,6 @@ class PreGameForm {
 		this.renderSyllabarySelection(form);
 		// Create and append the chapters selection section
 		this.createChaptersContainer(form);
-
 		// Create and append the start game button
 		this.renderGameButton(form);
 		// Add an event listener to the form to handle form submission
@@ -139,22 +123,6 @@ class PreGameForm {
 			selectAll: false,
 		});
 	}
-	// Method to create and append the question type selection section
-	renderQuestionTypeSelection(parent: HTMLFormElement) {
-		const questionType = createInputs({
-			form: parent,
-			className: CLASS_NAMES.QUESTIONS_TYPE,
-			type: 'radio',
-			name: 'questionType',
-			required: true,
-			elements: this.$questionType,
-			selectAll: false,
-		});
-		questionType.addEventListener('change', (event: Event) => {
-			const target = event.target as HTMLInputElement;
-			this.$selectedQuestionType = target.value as QuestionType;
-		});
-	}
 	// Method to create and append the answers direction selection section
 	renderAnswersDirectionSelection(parent: HTMLFormElement) {
 		const answersDirection = createInputs({
@@ -170,7 +138,7 @@ class PreGameForm {
 			const target = event.target as HTMLInputElement;
 
 			this.$selectedAnswersDirection = target.value as AnswersDirection;
-			console.log(target.value, this.$selectedAnswersDirection);
+
 			this.renderChaptersSelection();
 		});
 	}
@@ -283,7 +251,6 @@ class PreGameForm {
 		// Extract form data using FormData API
 		const formData = new FormData(form);
 		const username = formData.get('username') as string;
-		const questionsType = formData.get('questionType') as QuestionType;
 		const answersDirection = formData.get(
 			'answersDirection'
 		) as AnswersDirection;
@@ -295,17 +262,10 @@ class PreGameForm {
 			alert('Pick at least one chapter');
 			return;
 		}
-		console.log(
-			questionsType,
-			answersDirection,
-			difficulty,
-			syllabary,
-			chapters
-		);
+
 		this.unmount(); // Remove the form from the DOM
 		this.$onPregameFormSubmit(
 			username,
-			questionsType,
 			answersDirection,
 			difficulty,
 			syllabary,
