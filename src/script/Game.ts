@@ -17,7 +17,7 @@ class Game {
 	$gameRenderer: GameRenderer;
 	$gameId: string;
 	$player: Player;
-	$difficulty: string;
+	$difficulty: Difficulty;
 	$chapters: string[];
 	$syllabary: Syllabary;
 	$score: number;
@@ -150,7 +150,6 @@ class Game {
 		answersDirection: AnswersDirection,
 		syllabary: Syllabary
 	) {
-		console.log(result, answer, answersDirection, syllabary);
 		if (result) {
 			switch (answersDirection) {
 				case AnswersDirection.TO_JAPANESE:
@@ -209,10 +208,13 @@ class Game {
 			const gameResults = {
 				id: this.$gameId,
 				time: this.getGameTime(),
+				answersDirection,
+				difficulty: this.$difficulty,
 				questionsCount: this.$questionsData.length,
 				correctAnswers: this.$answeredCorrectly,
 				wrongAnswers: this.$answeredWrong,
 			};
+			console.log(gameResults);
 			this.$player.addGameStatistics(gameResults);
 			this.$gameRenderer.displayResults();
 		} else {

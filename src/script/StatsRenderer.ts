@@ -8,6 +8,7 @@ const STATS_CLASS_NAMES = {
 	PLAYER_STATS_AVERAGE: 'playerStats__average',
 	PLAYER_STATS_JAPANESE: 'playerStats__japanese',
 	PLAYER_STATS_ROMAJI: 'playerStats__romaji',
+	PLAYER_STATS_MIXED: 'playerStats__mixed',
 };
 
 class StatsRenderer {
@@ -45,6 +46,7 @@ class StatsRenderer {
 		this.renderAverageStats(statsWrapper);
 		this.renderJapaneseToRomajiStats(statsWrapper);
 		this.renderRomajiToJapaneseStats(statsWrapper);
+		this.$stats.mixed ? this.renderMixedStats(statsWrapper) : null;
 	}
 	renderGeneralStats(wrapper: HTMLDivElement) {
 		const generalStatsContainer = createContainer(
@@ -110,7 +112,11 @@ class StatsRenderer {
 			averageStatsContainer
 		);
 	}
-	createHirKatParagraphs(container: HTMLDivElement) {
+	createHirKatParagraphs(container: HTMLDivElement, data: Stats) {
+		const gamesPlayedPar = createParagraph(
+			`Games played: ${data.games ? data.games : ''}`,
+			container
+		);
 		const hiraganaCorrectAnswersPar = createParagraph(
 			`Hiragana correct answers: `,
 			container
@@ -143,7 +149,10 @@ class StatsRenderer {
 			'h3',
 			`Japanese to Romaji`
 		);
-		this.createHirKatParagraphs(japaneseToRomajiContainer);
+		this.createHirKatParagraphs(
+			japaneseToRomajiContainer,
+			this.$stats.japaneseToRomaji
+		);
 	}
 	renderRomajiToJapaneseStats(wrapper: HTMLDivElement) {
 		const romajiToJapaneseContainer = createContainer(
@@ -152,7 +161,19 @@ class StatsRenderer {
 			'h3',
 			`Romaji to Japanese`
 		);
-		this.createHirKatParagraphs(romajiToJapaneseContainer);
+		this.createHirKatParagraphs(
+			romajiToJapaneseContainer,
+			this.$stats.romajiToJapanese
+		);
+	}
+	renderMixedStats(wrapper: HTMLDivElement) {
+		const mixedContainer = createContainer(
+			STATS_CLASS_NAMES.PLAYER_STATS_MIXED,
+			wrapper,
+			'h3',
+			'Mixed'
+		);
+		this.createHirKatParagraphs(mixedContainer, this.$stats.mixed);
 	}
 }
 

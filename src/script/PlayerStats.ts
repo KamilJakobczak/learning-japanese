@@ -1,4 +1,5 @@
 import { characters } from '../data/db';
+import { AnswersDirection } from './enums/enums';
 import {
 	GameResults,
 	PlayerStatsInterface,
@@ -100,7 +101,7 @@ class PlayerStats {
 	}
 	getJapaneseToRomajiStats(): Stats {
 		return {
-			games: 0,
+			games: this.calculateGames(AnswersDirection.TO_ROMAJI).toRomaji,
 			correctAnswers: 0,
 			wrongAnswers: 0,
 			accuracy: '',
@@ -117,7 +118,7 @@ class PlayerStats {
 	}
 	getRomajiToJapaneseStats(): Stats {
 		return {
-			games: 0,
+			games: this.calculateGames(AnswersDirection.TO_JAPANESE).toJapanese,
 			correctAnswers: 0,
 			wrongAnswers: 0,
 			accuracy: '',
@@ -166,6 +167,29 @@ class PlayerStats {
 	getAccuracy(correct: number, wrong: number): string {
 		const accuracy = (correct / (correct + wrong)) * 100;
 		return accuracy.toFixed(2) + '%';
+	}
+	calculateGames(answersDirection: AnswersDirection) {
+		const games = Array.from(this.$games.values()).reduce(
+			(acc, entry) => {
+				switch (entry.answersDirection) {
+					case AnswersDirection.TO_JAPANESE:
+						acc.toJapanese++;
+						break;
+					case AnswersDirection.TO_ROMAJI:
+						acc.toRomaji++;
+						break;
+					case AnswersDirection.MIXED:
+						acc.mixed++;
+						break;
+					default:
+						break;
+				}
+
+				return acc;
+			},
+			{ toRomaji: 0, toJapanese: 0, mixed: 0 }
+		);
+		return games;
 	}
 	// getSpecificCharacterStats(index: string): CharacterStats {
 	// 	const character = characters[index];

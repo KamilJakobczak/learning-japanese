@@ -1,4 +1,4 @@
-import { AnswersDirection, Syllabary } from '../enums/enums';
+import { AnswersDirection, Difficulty, Syllabary } from '../enums/enums';
 
 export interface Answers {
 	toRomaji: {
@@ -19,6 +19,8 @@ export interface GameTime {
 export interface GameResults {
 	id: string;
 	time: GameTime;
+	answersDirection: AnswersDirection;
+	difficulty: Difficulty;
 	questionsCount: number;
 	correctAnswers: Answers;
 	wrongAnswers: Answers;
@@ -33,7 +35,7 @@ export interface QuestionData {
 }
 
 export interface Stats {
-	games: number;
+	games?: number;
 	correctAnswers: number;
 	wrongAnswers: number;
 	accuracy: string;
@@ -44,5 +46,6 @@ export interface PlayerStatsInterface {
 	general: Stats;
 	japaneseToRomaji?: Stats;
 	romajiToJapanese?: Stats;
+	mixed?: Stats;
 	specificCharactersStats: {};
 }
