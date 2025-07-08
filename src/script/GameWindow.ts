@@ -78,7 +78,10 @@ class GameWindow {
 	renderGame(game: Game) {
 		const gameTitle = document.querySelector('h1');
 		if (gameTitle) {
-			gameTitle.textContent = `${this.$currentPlayer?.getName()}'s learning japanese`;
+			const player = this.$currentPlayer
+				? `${this.$currentPlayer.getName()}'s`
+				: null;
+			gameTitle.textContent = player + ' ' + 'learning japanese';
 		}
 		game.render();
 	}
