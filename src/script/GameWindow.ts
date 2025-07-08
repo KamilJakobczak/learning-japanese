@@ -58,9 +58,9 @@ class GameWindow {
 		wrapper.appendChild(hiraganaGame);
 		// Create and append the game title
 		const hiraganaGameTitle = document.createElement('h1');
-		hiraganaGameTitle.textContent = `${
-			this.$currentPlayer?.getName() || ''
-		}'s Learning Japanese`; // Update the game title to include the player's name
+		hiraganaGameTitle.textContent = this.$currentPlayer
+			? `${this.$currentPlayer.getName()}'s Learning Japanese`
+			: 'Learning Japanese'; // Update the game title to include the player's name
 		hiraganaGame.appendChild(hiraganaGameTitle);
 		return hiraganaGame;
 	}
@@ -78,10 +78,7 @@ class GameWindow {
 	renderGame(game: Game) {
 		const gameTitle = document.querySelector('h1');
 		if (gameTitle) {
-			const player = this.$currentPlayer
-				? `${this.$currentPlayer.getName()}'s`
-				: null;
-			gameTitle.textContent = player + ' ' + 'learning japanese';
+			gameTitle.textContent = `${this.$currentPlayer?.getName()}'s learning japanese`;
 		}
 		game.render();
 	}
